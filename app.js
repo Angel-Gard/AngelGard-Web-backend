@@ -11,6 +11,8 @@ app.use(cookieParser());
 const testRouter = require("./routes/testRouter");
 const boardRouter = require("./routes/boardRouter");
 const commentRouter = require("./routes/commentRouter");
+const indexRouter = require('./routes/index');
+const userRouter = require('./routes/user');
 
 const indexRouter = require('./routes/index');
 const userRouter = require('./routes/user');
