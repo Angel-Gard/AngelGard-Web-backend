@@ -5,11 +5,15 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const methodOverride = require("method-override");
+app.use(cookieParser());
 
 // 라우터
 const testRouter = require("./routes/testRouter");
 const boardRouter = require("./routes/boardRouter");
 const commentRouter = require("./routes/commentRouter");
+
+const indexRouter = require('./routes/index');
+const userRouter = require('./routes/user');
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -34,6 +38,9 @@ app.use((req, res, next) => {
 app.use("/test", testRouter);
 app.use("/board", boardRouter);
 app.use("/comment", commentRouter);
+
+app.use('/', indexRouter);
+app.use('/user', userRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
