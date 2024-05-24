@@ -11,7 +11,7 @@ module.exports = {
             .catch((err) => {
                 next(err);
             });
-    },
+    },  
     // 게시글 상세
     selectBoard: async function (req, res, next) {
         await boards
