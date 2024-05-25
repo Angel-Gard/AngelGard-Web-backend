@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const boards = require("../models/board");
 const comments = require("../models/comment");
+const babys=require("../models/baby");
+
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
@@ -25,6 +27,7 @@ router.get("/write", function (req, res, next) {
 </form></html>`;
     res.send(html);
 });
+
 
 router.get("/update/:board_id", function (req, res, next) {
     boards.updateBoard(req).then((result) => {
@@ -87,6 +90,70 @@ router.get("/comment/delete/:comment_id", function (req, res, next) {
         <input type="submit" value="Submit">
     </form></html>`;
     res.send(html);
+});
+
+router.get("/create", function (req, res, next) {
+    var html = `
+        <html>
+            <form action="baby/create" method="post">
+            <label for="user_id">User ID:</label>
+            <input type="text" id="user_id" name="user_id"><br><br>
+            
+                <label for="baby_name">아이 이름:</label>
+                <input type="text" id="baby_name" name="baby_name"><br><br>
+                
+                <label for="baby_birth">생년월일:</label>
+                <input type="date" id="baby_birth" name="baby_birth"><br><br>
+                
+                <label for="baby_sex">성별:</label>
+                <input type="radio" id="male" name="baby_sex" value="남자">
+                <label for="male">남자</label>
+                <input type="radio" id="female" name="baby_sex" value="여자">
+                <label for="female">여자</label><br><br>
+                
+                <label for="baby_height">키:</label>
+                <input type="number" id="baby_height" name="baby_height"><br><br>
+                
+                <label for="baby_weight">몸무게:</label>
+                <input type="number" id="baby_weight" name="baby_weight"><br><br>
+                
+                <input type="submit" value="제출">
+            </form>
+        </html>`;
+    res.send(html);
+});
+
+router.get("/update/:user_id/:baby_id", function (req, res, next) {
+  var html = `
+      <html>
+          <form action="/baby/update/${req.params.user_id}/${req.params.baby_id}" method="post">
+              <label for="baby_name">아이 이름:</label>
+              <input type="text" id="baby_name" name="baby_name"><br><br>
+              <label for="baby_birth">생년월일:</label>
+              <input type="date" id="baby_birth" name="baby_birth"><br><br>
+              <label for="baby_sex">성별:</label>
+              <input type="radio" id="male" name="baby_sex" value="남자">
+              <label for="male">남자</label>
+              <input type="radio" id="female" name="baby_sex" value="여자">
+              <label for="female">여자</label><br><br>
+              <label for="baby_height">키:</label>
+              <input type="number" id="baby_height" name="baby_height"><br><br>
+              <label for="baby_weight">몸무게:</label>
+              <input type="number" id="baby_weight" name="baby_weight"><br><br>
+              <input type="submit" value="업데이트">
+          </form>
+      </html>`;
+  res.send(html);
+});
+
+router.get("/delete/:user_id/:baby_id", function (req, res, next) {
+  var html = `
+      <html>
+          <form action="/baby/delete/${req.params.user_id}/${req.params.baby_id}" method="post">
+              <input type="submit" value="삭제">
+          </form>
+      </html>`;
+  res.send(html);
 });
 
 module.exports = router;
