@@ -20,6 +20,10 @@ module.exports = {
         FROM board LEFT JOIN user ON board.user_id = user.user_id 
         ORDER BY board_id DESC LIMIT ?, ?`;
         const [rows2] = await db.query(sql2, [skipSize, contentSize]);
+        if (rows2.length === 0) {
+            console.log(`게시글 목록 조회 실패`);
+            return false;
+        }
         const result = {
             pageNum,
             pnStart,
@@ -34,53 +38,75 @@ module.exports = {
         const sql = `SELECT board.board_date, user.user_nickname, board.board_title, board.board_content, board.user_id
         FROM board LEFT JOIN user ON board.user_id = user.user_id WHERE board_id = ?`;
         const [rows] = await db.query(sql, [Number(req.params.board_id)]);
+        if (rows.length === 0) {
+            console.log(`board_id ${req.params.board_id} : 게시글 조회 실패`);
+            return false;
+        }
         return Object.setPrototypeOf(rows, []);
     },
     createBoard: async function (req, res) {
         const sql = `INSERT INTO board (user_id, board_title, board_content, board_date) VALUES(?,?,?,NOW())`;
         const [rows] = await db.query(sql, [Number(req.body.user_id), req.body.board_title, req.body.board_content]);
+        if (rows.affectedRows === 0) {
+            console.log(`게시글 생성 실패`);
+            return false;
+        }
         return Number(rows.insertId);
     },
     updateBoard: async function (req, res) {
         const sql = `SELECT board_title, board_content 
                     FROM board WHERE board_id = ?`;
         const [rows] = await db.query(sql, [Number(req.params.board_id)]);
+        if (rows.length === 0) {
+            console.log(`board_id ${req.params.board_id} : 게시글 수정(조회) 실패`);
+            return false;
+        }
         return Object.setPrototypeOf(rows, []);
     },
     updateBoardProcess: async function (req, res) {
         const sql = `UPDATE board SET board_title=?, board_content=? WHERE board_id = ?`;
         const [rows] = await db.query(sql, [req.body.board_title, req.body.board_content, Number(req.params.board_id)]);
-        return Number(req.params.board_id);
+
+        if (rows.affectedRows === 0) {
+            console.log(`board_id ${req.params.board_id} : 게시글 수정 실패`);
+            return false;
+        }
+        return true;
     },
     deleteBoard: async function (req, res) {
+        const boardId = req.params.board_id;
+
         // 게시글 댓글 삭제
-        var DeletedComment = false; // 댓글 삭제 확인
+        var DeletedComments = false; // 댓글 삭제 확인
         const sql1 = `SELECT count(*) AS count FROM comment WHERE board_id = ?`;
-        const [rows1] = await db.query(sql1, [Number(req.params.board_id)]);
+        const [rows1] = await db.query(sql1, [Number(boardId)]);
 
         const totalCount = Number(rows1[0].count); // 댓글 개수
 
         if (totalCount > 0) {
             // 댓글이 하나 이상
             const sql2 = `DELETE FROM comment WHERE board_id=?`;
-            const [rows2] = await db.query(sql2, [Number(req.params.board_id)]);
+            const [rows2] = await db.query(sql2, [Number(boardId)]);
 
-            if (rows2.affectedRows > 0) {
-                DeletedComment = true;
+            if (rows2.affectedRows === 0) {
+                console.log(`board_id ${boardId} : 게시글 댓글 삭제 실패`);
+                DeletedComments = false;
+            } else {
+                DeletedComments = true;
             }
-            console.log("1 : ", DeletedComment);
         } else {
             // 댓글이 없으면
-            DeletedComment = true;
+            DeletedComments = true;
         }
 
-        if (DeletedComment) {
+        if (DeletedComments) {
             const sql = `DELETE FROM board WHERE board_id=?`;
-            const [rows] = await db.query(sql, [Number(req.params.board_id)]);
+            const [rows] = await db.query(sql, [Number(boardId)]);
 
             //rows.affectedRows는 쿼리를 실행한 후에 변경된 행의 수
-            if (rows.affectedRows < 1) {
+            if (rows.affectedRows === 0) {
                 // 변경된 행이 없다면
+                console.log(`board_id ${boardId}: 게시글 삭제 실패`);
                 return false;
             }
             return true;

@@ -6,7 +6,11 @@ module.exports = {
         await comments
             .selectComments(req)
             .then((result) => {
-                res.status(200).json(result);
+                if (result) {
+                    res.status(200).json(result);
+                } else {
+                    res.status(404).json({ message: "댓글 조회 실패" });
+                }
             })
             .catch((err) => {
                 next(err);
@@ -17,7 +21,11 @@ module.exports = {
         await comments
             .createComment(req)
             .then((result) => {
-                res.status(200).json({ message: result });
+                if (result) {
+                    res.status(200).json({ message: "댓글 생성 완료" });
+                } else {
+                    res.status(200).json({ message: "댓글 생성 실패" });
+                }
             })
             .catch((err) => {
                 next(err);
@@ -28,7 +36,11 @@ module.exports = {
         await comments
             .updateComment(req)
             .then((result) => {
-                res.status(200).json(result);
+                if (result) {
+                    res.status(200).json(result);
+                } else {
+                    res.status(404).json({ message: "수정할 댓글 조회 실패" });
+                }
             })
             .catch((err) => {
                 next(err);
@@ -39,7 +51,11 @@ module.exports = {
         await comments
             .updateCommentProcess(req)
             .then((result) => {
-                res.status(200).json({ message: result });
+                if (result) {
+                    res.status(200).json({ message: "댓글 수정 완료" });
+                } else {
+                    res.status(404).json({ message: "댓글 수정 실패" });
+                }
             })
             .catch((err) => {
                 next(err);
@@ -51,9 +67,9 @@ module.exports = {
             .deleteComment(req)
             .then((result) => {
                 if (result) {
-                    res.status(200).json({ message: result });
+                    res.status(200).json({ message: "댓글 삭제 완료" });
                 } else {
-                    next(err);
+                    res.status(404).json({ message: "댓글 삭제 실패" });
                 }
             })
             .catch((err) => {

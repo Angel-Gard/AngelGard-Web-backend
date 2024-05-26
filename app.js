@@ -6,7 +6,7 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const methodOverride = require("method-override");
 
-// 라우터
+// 라우터 임포트
 const testRouter = require("./routes/testRouter");
 const boardRouter = require("./routes/boardRouter");
 const commentRouter = require("./routes/commentRouter");
@@ -18,6 +18,7 @@ const userRouter = require("./routes/user");
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 
+// 미들웨어
 app.use(methodOverride("_method"));
 app.use(logger("dev"));
 app.use(express.json());
@@ -34,6 +35,7 @@ app.use((req, res, next) => {
 });
 // CORS
 
+// 라우터 사용
 app.use("/test", testRouter);
 app.use("/board", boardRouter);
 app.use("/comment", commentRouter);

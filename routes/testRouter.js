@@ -67,17 +67,22 @@ router.get("/comment/write/:board_id", function (req, res, next) {
 });
 
 router.get("/comment/update/:comment_id", function (req, res, next) {
-    comments.updateComment(req).then((result) => {
-        const data = result[0];
-        const html = `
+    comments
+        .updateComment(req)
+        .then((result) => {
+            const data = result[0];
+            const html = `
         <html>
         <form action="/comment/update/${req.params.comment_id}?_method=PUT" method="post">
             <label for="comment_content">Comment Content:</label><br>
             <textarea id="comment_content" name="comment_content">${data.comment_content}</textarea><br><br>
             <input type="submit" value="Submit">
         </form></html>`;
-        res.send(html);
-    });
+            res.send(html);
+        })
+        .catch((err) => {
+            next(err);
+        });
 });
 
 router.get("/comment/delete/:comment_id", function (req, res, next) {
