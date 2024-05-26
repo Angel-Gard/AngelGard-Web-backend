@@ -42,7 +42,7 @@ module.exports = {
             console.log(`board_id ${req.params.board_id} : 게시글 조회 실패`);
             return false;
         }
-        return Object.setPrototypeOf(rows, []);
+        return rows[0];
     },
     createBoard: async function (req, res) {
         const sql = `INSERT INTO board (user_id, board_title, board_content, board_date) VALUES(?,?,?,NOW())`;
@@ -61,7 +61,7 @@ module.exports = {
             console.log(`board_id ${req.params.board_id} : 게시글 수정(조회) 실패`);
             return false;
         }
-        return Object.setPrototypeOf(rows, []);
+        return rows[0];
     },
     updateBoardProcess: async function (req, res) {
         const sql = `UPDATE board SET board_title=?, board_content=? WHERE board_id = ?`;

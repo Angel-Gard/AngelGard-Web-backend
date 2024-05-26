@@ -22,7 +22,7 @@ app.set("view engine", "jade");
 // 미들웨어
 app.use(methodOverride("_method"));
 app.use(logger("dev"));
-app.use(express.json());
+app.use(express.json({ limit: "1mb" })); // 413 payload too large 에러 해결
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
@@ -40,7 +40,7 @@ app.use((req, res, next) => {
 app.use("/test", testRouter);
 app.use("/board", boardRouter);
 app.use("/comment", commentRouter);
-app.use("/baby", babyRouter); 
+app.use("/baby", babyRouter);
 
 app.use("/", indexRouter);
 app.use("/user", userRouter);

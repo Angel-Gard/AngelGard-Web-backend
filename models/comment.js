@@ -10,7 +10,7 @@ module.exports = {
             console.log(`board_id [${req.params.board_id}]: 댓글 조회 실패`);
             return false;
         }
-        return Object.setPrototypeOf(rows, []);
+        return rows;
     },
     createComment: async function (req, res) {
         const sql = `INSERT INTO comment (board_id, user_id, comment_content, comment_date ) VALUES(?,?,?,NOW())`;
@@ -29,7 +29,7 @@ module.exports = {
             console.log(`comment_id [${req.params.comment_id}]: 수정할 댓글 조회 실패`);
             return false;
         }
-        return Object.setPrototypeOf(rows, []);
+        return rows[0];
     },
     updateCommentProcess: async function (req, res) {
         const sql = `UPDATE comment SET comment_content=? WHERE comment_id =?`;
