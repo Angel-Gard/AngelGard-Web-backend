@@ -16,7 +16,7 @@ module.exports = {
         try {
             return connection;
         } catch (err) {
-            console.log(err);
+            console.log("DB connection error: " + err);
         }
     },
     query: async function (query, args) {

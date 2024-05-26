@@ -1,6 +1,6 @@
-const express = require('express');
-const userController = require('../controller/usercontroller'); // 경로 확인
-const authenticateJWT = require('../middlewares/authmiddleware'); // JWT 미들웨어 경로 확인
+const express = require("express");
+const userController = require("../controllers/usercontroller"); // 경로 확인
+const authenticateJWT = require("../middlewares/authmiddleware"); // JWT 미들웨어 경로 확인
 const router = express.Router();
 
 router.post('/signUp', userController.CsignUp);
