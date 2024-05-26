@@ -10,6 +10,7 @@ const methodOverride = require("method-override");
 const testRouter = require("./routes/testRouter");
 const boardRouter = require("./routes/boardRouter");
 const commentRouter = require("./routes/commentRouter");
+const babyRouter = require("./routes/babyrouter");
 
 const indexRouter = require("./routes/index");
 const userRouter = require("./routes/user");
@@ -39,6 +40,7 @@ app.use((req, res, next) => {
 app.use("/test", testRouter);
 app.use("/board", boardRouter);
 app.use("/comment", commentRouter);
+app.use("/baby", babyRouter); 
 
 app.use("/", indexRouter);
 app.use("/user", userRouter);
