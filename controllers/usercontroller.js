@@ -75,25 +75,26 @@ exports.Cinfo = async (req, res) => {
 // 회원정보 수정
 exports.Cupdate = async (req, res) => {
     try {
-        const token = req.cookies.token;
-        console.log('Token:', token);
-        if (!token) {
-            return res.status(401).json({ result: false, message: '토큰이 없습니다.' });
+        if (!req.user) {
+            console.log('No user in request');
+            return res.status(401).json({ result: false, message: '인증 실패' });
         }
-        const decoded = jwt.verify(token, secretKey);
-        console.log('Decoded ID:', decoded.id);
-        
-        console.log('Request Body:', req.body);
-        const hashedPassword = await bcrypt.hash(req.body.pw, 10); // 비밀번호 해싱
-        console.log('Hashed Password:', hashedPassword);
-        
-        const updateData = { ...req.body, pw: hashedPassword, id: decoded.id,username:decoded.username };
+        console.log('User:', req.user.id,req.user.pw,req.user.username);
+        let updateData = { ...req.body};
+        console.log('Update Data before password handling:', updateData);
+        if (req.body.pw) {
+            const hashedPassword = await bcrypt.hash(req.body.pw, 10); // 비밀번호 해싱
+            updateData.pw = hashedPassword;
+        }
+        console.log('Update Data after password handling:', updateData);
+
         const result = await User.Mupdate(updateData);
         console.log('Update Result:', result);
 
-        res.json({ result: true });
+        res.json({ result: true, message: '회원정보가 성공적으로 수정되었습니다.' });
     } catch (error) {
-        res.status(401).json({ result: false, message: '인증 실패' });
+        console.error('Error in Cupdate:', error);
+        res.status(500).json({ result: false, message: '서버 에러', error: error.message });
     }
 };
 

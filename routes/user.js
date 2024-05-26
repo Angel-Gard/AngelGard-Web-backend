@@ -6,7 +6,7 @@ const router = express.Router();
 router.post('/signUp', userController.CsignUp);
 router.post('/login', userController.Clogin);
 router.get('/info/:id', authenticateJWT, userController.Cinfo);
-router.patch('/update', authenticateJWT, userController.Cupdate);
+router.post('/update/:id', authenticateJWT, userController.Cupdate);
 router.delete('/delete', authenticateJWT, userController.Cdelete);
 
 module.exports = router;
