@@ -78,7 +78,7 @@ exports.Cupdate = async (req, res) => {
             return res.status(401).json({ result: false, message: '인증 실패' });
         }
         console.log('User:', req.user.id,req.user.pw,req.user.username);
-        let updateData = { ...req.body};
+        let updateData = { ...req.body ,user_id: req.param};
         console.log('Update Data before password handling:', updateData);
         if (req.body.pw) {
             const hashedPassword = await bcrypt.hash(req.body.pw, 10); // 비밀번호 해싱
