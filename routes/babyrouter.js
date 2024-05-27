@@ -1,5 +1,5 @@
 const express = require("express");
-const babyController = require("../Controllers/babyController");
+const babyController = require("../controllers/babyController");
 const babyRouter = express.Router();
 
 babyRouter.post("/create", babyController.createBaby);
