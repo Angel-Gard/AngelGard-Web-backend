@@ -24,7 +24,7 @@ module.exports = {
                 if (result) {
                     res.status(200).json({ message: "댓글 생성 완료" });
                 } else {
-                    res.status(200).json({ message: "댓글 생성 실패" });
+                    res.status(404).json({ message: "댓글 생성 실패" });
                 }
             })
             .catch((err) => {
