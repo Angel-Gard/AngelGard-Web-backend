@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('../model/quser.js'); // 쿼리 모델
+const User = require('../models/quser'); // 쿼리 모델
 const { param } = require('../routes');
 const secretKey = process.env.SECRET_KEY || 'um1y6ywqx8jy370';
 

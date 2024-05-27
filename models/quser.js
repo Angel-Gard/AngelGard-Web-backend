@@ -1,5 +1,5 @@
 
-const pool = require('../config/db.js')
+const pool = require('../config/db')
 
 //회원가입
 exports.MsignUp = async (data) => {
