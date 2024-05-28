@@ -6,7 +6,7 @@ module.exports = {
             const result = await babys.createBaby(req);
             const { user_id, baby_id } = result;
             const baby = await babys.getBabyById(user_id, baby_id);
-            res.render("create", { user_id: user_id, baby_id: baby_id, baby: baby });
+            res.status(200).json({ user_id: user_id, baby_id: baby_id, baby: baby });
         } catch (err) {
             next(err);
         }
@@ -16,10 +16,10 @@ module.exports = {
             const { user_id, baby_id } = req.params;
             const baby = await babys.getBabyById(user_id, baby_id);
             if (!baby) {
-                res.status(404).send("아기를 찾을 수 없습니다.");
+                res.status(404).json("아기를 찾을 수 없습니다.");
                 return;
             }
-            res.render("baby_update", { baby: baby });
+            res.status(200).json({ baby: baby });
         } catch (err) {
              next(err);
         }
@@ -30,7 +30,7 @@ module.exports = {
             const updateData = req.body;
             await babys.updateBaby(user_id, baby_id, updateData);
             const updatedBaby = await babys.getBabyById(user_id, baby_id);
-            res.render("create", { baby: updatedBaby });
+            res.status(200).json( { baby: updatedBaby });
         } catch (err) {
             next(err);
         }
