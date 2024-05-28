@@ -7,7 +7,9 @@ const pool = mysql.createPool({
     user: process.env.DB_USER,
     password: process.env.DB_PW,
     database: process.env.DB_NAME,
-    connectionLimit: 100,
+    waitForConnections: true,
+    connectionLimit: 20,  // 동시에 열 수 있는 최대 연결 수
+    queueLimit: 0
 });
 
 module.exports = {
@@ -16,11 +18,12 @@ module.exports = {
         try {
             return connection;
         } catch (err) {
-            console.log("DB connection error: " + err);
-        }
+            console.log(err);
+        }   
     },
     query: async function (query, args) {
         let rows;
+        try{
         const connection = await this.connection(async (conn) => conn);
 
         if (!args) {
@@ -30,7 +33,13 @@ module.exports = {
         }
 
         connection.release();
+    }
 
+        catch(err){
+            console.log(err);
+        }
+    
         return rows;
+    
     },
 };
