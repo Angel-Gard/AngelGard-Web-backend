@@ -9,12 +9,28 @@ const secretKey = process.env.SECRET_KEY || 'um1y6ywqx8jy370';
 // 회원가입
 exports.CsignUp = async (req, res) => {
     console.log(req.body);
+    const {id ,pw,username} = req.body;
+    console.log(id ,pw,username);
     try {
+        if(!id || !pw || !username ){
+            res.status(403).json({message:'정보를 모두 입력해주세요'});
+        }
+        const bodyid = req.body.id;
+        const userre = await User.MgetUserDetails(bodyid);
+        console.log(userre);
+        const userId = userre[0];
+        console.log('bodyuserid : ',bodyid)
+        if(userre.length >= 1){
+            res.status(402).json({ result: false, message: '아이디 중복'});
+        }
         const hashedPassword = await bcrypt.hash(req.body.pw, 10);
         const userData = { ...req.body, pw: hashedPassword };
         const result = await User.MsignUp(userData);
         console.log('signUp', result);
         res.status(200).json({ result: true });
+            
+        
+        
     } catch (error) {
         res.status(500).json({ result: false, message: '회원가입 실패', error: error.message });
     }
@@ -23,8 +39,12 @@ exports.CsignUp = async (req, res) => {
 // 로그인
 exports.Clogin = async (req, res) => {
     console.log(req.body);
+    const {id,pw} = req.body;
     try {
-        const result = await User.Mlogin(req.body);
+        if(!id||!pw){
+            res.status(403).json({message:'정보를 모두 입력해주세요'});
+        }else{
+            const result = await User.Mlogin(req.body);
         //console.log('login', result);
         if (result.length >= 1) {
             const user = result[0];
@@ -35,40 +55,51 @@ exports.Clogin = async (req, res) => {
             if (match) {
                 const token = jwt.sign({ id: user.id, username: user.username }, secretKey, { expiresIn: '1h' });
                 res.cookie(user.user_id, token, { httpOnly: true, secure: true });
-                res.json({ result: true, message: '로그인 성공', token: token, data: { user_nickname: user.user_nickname, user_id: user.user_id } });
+                res.json({ result: true, message: '로그인 성공', token: token, data: { user_nickname: user.user_nickname, user_id: user.user_login_id } });
             } else {
-                res.json({ result: false, message: '비밀번호가 일치하지 않습니다.' });
+                res.status(406).json({ result: false, message: '비밀번호가 일치하지 않습니다.' });
             }
         } else {
-            res.json({ result: false, message: '사용자를 찾을 수 없습니다.' });
+            res.status(405).json({ result: false, message: '사용자를 찾을 수 없습니다.' });
         }
+        }
+        
     } catch (error) {
         console.error('로그인 중 에러 발생:', error);
         res.status(500).json({ result: false, message: '로그인 실패', error: error.message });
     }
 };
 
-// 회원정보 조회
-exports.Cinfo = async (req, res) => {
+//로그아웃
+exports.Clogout = (req, res) => {
     try {
-        const token = req.cookies.token;
-        console.log('Token:', token);
-        if (!token) {
-            return res.status(401).json({ result: false, message: '토큰이 없습니다.' });
-        }
-        const decoded = jwt.verify(token, secretKey);
-        console.log('Decoded ID:', decoded.id);
+        res.clearCookie('token'); // 쿠키에서 JWT 토큰을 삭제
+        res.json({ result: true, message: '로그아웃 성공' });
+    } catch (error) {
+        console.error('로그아웃 중 에러 발생:', error);
+        res.status(500).json({ result: false, message: '로그아웃 실패', error: error.message });
+    }
+};
 
-        const result = await User.Minfo(decoded.id);
-        console.log('info', result);
+
+// 유저 정보 조회
+exports.getUserDetails = async (req, res) => {
+    try {
+        const userId = req.params.id; // URL에서 id 값 가져오기
+        if (!userId) {
+            return res.status(400).json({ result: false, message: '유효한 사용자 ID가 필요합니다.' });
+        }
+
+        const result = await User.MgetUserDetails(userId);
         if (result.length > 0) {
-            res.json({ result: true, info: result[0], message: '회원존재' });
+            const user = result[0];
+            res.json({ result: true, data: { id: user.user_login_id, pw: user.user_pw, nickname: user.user_nickname } });
         } else {
-            res.json({ result: false, info: null, message: '존재하지 않는 회원' });
+            res.json({ result: false, message: '사용자를 찾을 수 없습니다.' });
         }
     } catch (error) {
-        console.error('Error in Cinfo:', error);
-        res.status(401).json({ result: false, message: '인증 실패' });
+        console.error('Error in getUserDetails:', error);
+        res.status(500).json({ result: false, message: '서버 에러', error: error.message });
     }
 };
 
