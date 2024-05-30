@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const imageController = require('../controllers/imagecontroller');
 const authenticateJWT = require('../middlewares/authmiddleware');
-const imagemid = require('../middlewares/imagemiddleware');
 
 
 
