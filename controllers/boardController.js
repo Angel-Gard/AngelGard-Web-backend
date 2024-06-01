@@ -134,7 +134,6 @@ module.exports = {
                 if (req.file) {
                     // 이미지가 있을 경우
                     filePath = "http://localhost:3000/image/thumbnails/" + req.file.filename;
-                    console.log("test:" + req.file.filename);
                 }
                 await boards
                     .selectImage(req)
