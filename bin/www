@@ -7,6 +7,7 @@
 var app = require("../app");
 var debug = require("debug")("angelguard-web-backend:server");
 var http = require("http");
+var path = require("path");
 
 /**
  * Get port from environment and store in Express.
@@ -85,3 +86,13 @@ function onListening() {
     debug("Listening on " + bind);
     console.log("Listening on " + bind);
 }
+
+// ** 예기치 않은 예외처리 + 처리되지 않은 거절 처리
+
+process.on("uncaughtException", (err) => {
+    console.error("Uncaught Exception:", err);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+    console.error("Unhandled Rejection at:", promise, "reason:", reason);
+});
