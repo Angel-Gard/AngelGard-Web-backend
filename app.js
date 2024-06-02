@@ -10,6 +10,7 @@ const methodOverride = require("method-override");
 const testRouter = require("./routes/testRouter");
 const boardRouter = require("./routes/boardRouter");
 const commentRouter = require("./routes/commentRouter");
+const likeRouter = require("./routes/likeRouter");
 const babyRouter = require("./routes/babyrouter");
 
 const indexRouter = require("./routes/index");
@@ -37,14 +38,15 @@ app.use((req, res, next) => {
 // CORS
 
 // 라우터 사용
+app.use("/", indexRouter);
+app.use("/user", userRouter);
 app.use("/test", testRouter);
 app.use("/board", boardRouter);
 app.use("/comment", commentRouter);
+app.use("/like", likeRouter);
 app.use("/baby", babyRouter);
 
-app.use("/", indexRouter);
-app.use("/user", userRouter);
-
+// 이미지 반환
 app.use("/image/thumbnails", express.static("./image/thumbnails"));
 
 // catch 404 and forward to error handler

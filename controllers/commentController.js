@@ -22,9 +22,9 @@ module.exports = {
             .createComment(req)
             .then((result) => {
                 if (result) {
-                    res.status(200).json({ message: "댓글 생성 완료" });
+                    res.status(200).json({ message: "댓글 생성 완료", success: true });
                 } else {
-                    res.status(404).json({ message: "댓글 생성 실패" });
+                    res.status(404).json({ message: "댓글 생성 실패", success: false });
                 }
             })
             .catch((err) => {
@@ -52,9 +52,9 @@ module.exports = {
             .updateCommentProcess(req)
             .then((result) => {
                 if (result) {
-                    res.status(200).json({ message: "댓글 수정 완료" });
+                    res.status(200).json({ message: "댓글 수정 완료", success: true });
                 } else {
-                    res.status(404).json({ message: "댓글 수정 실패" });
+                    res.status(404).json({ message: "댓글 수정 실패", success: false });
                 }
             })
             .catch((err) => {
@@ -67,9 +67,9 @@ module.exports = {
             .deleteComment(req)
             .then((result) => {
                 if (result) {
-                    res.status(200).json({ message: "댓글 삭제 완료" });
+                    res.status(200).json({ message: "댓글 삭제 완료", success: true });
                 } else {
-                    res.status(404).json({ message: "댓글 삭제 실패" });
+                    res.status(404).json({ message: "댓글 삭제 실패", success: false });
                 }
             })
             .catch((err) => {

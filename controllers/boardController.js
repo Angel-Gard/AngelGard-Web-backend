@@ -95,9 +95,9 @@ module.exports = {
                     .createBoard(req, filePath)
                     .then((result) => {
                         if (result) {
-                            res.status(200).json({ board_id: result, message: "게시글 생성 완료" });
+                            res.status(200).json({ board_id: result, message: "게시글 생성 완료", success: true });
                         } else {
-                            res.status(404).json({ message: "게시글 생성 실패" });
+                            res.status(404).json({ message: "게시글 생성 실패", success: false });
                         }
                     })
                     .catch((err) => {
@@ -154,9 +154,9 @@ module.exports = {
                                 // 이미지 삭제 함수 호출
                                 deleteImage(filename);
                             }
-                            res.status(200).json({ message: "게시글 수정 완료" });
+                            res.status(200).json({ message: "게시글 수정 완료", success: true });
                         } else {
-                            res.status(404).json({ message: "게시글 수정 실패" });
+                            res.status(404).json({ message: "게시글 수정 실패", success: false });
                         }
                     })
                     .catch((err) => {
@@ -183,9 +183,9 @@ module.exports = {
                     let filename = path.basename(lastfilePath);
                     // 이미지 삭제 함수 호출
                     deleteImage(filename);
-                    res.status(200).json({ message: "게시글 삭제 완료" });
+                    res.status(200).json({ message: "게시글 삭제 완료", success: true });
                 } else {
-                    res.status(404).json({ message: "게시글 삭제 실패" });
+                    res.status(404).json({ message: "게시글 삭제 실패", success: false });
                 }
             })
             .catch((err) => {

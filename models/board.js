@@ -16,8 +16,10 @@ module.exports = {
         const pnStart = (Math.ceil(pageNum / pnSize) - 1) * pnSize + 1; // 현재 페이지의 페이지네이션 시작 번호.
         let pnEnd = pnStart + pnSize - 1; // 현재 페이지의 페이지네이션 끝 번호.
 
-        const sql2 = `SELECT board.board_id, board.board_title, board.board_date, user.user_nickname, board.board_thumbnail
+        const sql2 = `SELECT board.board_id, board.board_title, board.board_date, user.user_nickname, board.board_thumbnail, COUNT(likes.like_id) AS like_count
         FROM board LEFT JOIN user ON board.user_id = user.user_id 
+        LEFT JOIN likes ON board.board_id = likes.board_id
+        GROUP BY board.board_id
         ORDER BY board_id DESC LIMIT ?, ?`;
         const [rows2] = await db.query(sql2, [skipSize, contentSize]);
         if (rows2.length === 0) {
