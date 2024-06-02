@@ -14,23 +14,22 @@ exports.CsignUp = async (req, res) => {
     try {
         if(!id || !pw || !username ){
             res.status(403).json({message:'정보를 모두 입력해주세요'});
-        }
-        const bodyid = req.body.id;
+        }else{
+            const bodyid = req.body.id;
         const userre = await User.MgetUserDetails(bodyid);
         console.log(userre);
         const userId = userre[0];
         console.log('bodyuserid : ',bodyid)
         if(userre.length >= 1){
             res.status(402).json({ result: false, message: '아이디 중복'});
+        }else{
+            const hashedPassword = await bcrypt.hash(req.body.pw, 10);
+            const userData = { ...req.body, pw: hashedPassword };
+            const result = await User.MsignUp(userData);
+            console.log('signUp', result);
+            res.status(200).json({ result: true });
         }
-        const hashedPassword = await bcrypt.hash(req.body.pw, 10);
-        const userData = { ...req.body, pw: hashedPassword };
-        const result = await User.MsignUp(userData);
-        console.log('signUp', result);
-        res.status(200).json({ result: true });
-            
-        
-        
+        }
     } catch (error) {
         res.status(500).json({ result: false, message: '회원가입 실패', error: error.message });
     }
@@ -88,15 +87,16 @@ exports.getUserDetails = async (req, res) => {
         const userId = req.params.id; // URL에서 id 값 가져오기
         if (!userId) {
             return res.status(400).json({ result: false, message: '유효한 사용자 ID가 필요합니다.' });
+        }else{
+            const result = await User.MgetUserDetails(userId);
+            if (result.length > 0) {
+                const user = result[0];
+                res.json({ result: true, data: { id: user.user_login_id, pw: user.user_pw, nickname: user.user_nickname } });
+            } else {
+                res.json({ result: false, message: '사용자를 찾을 수 없습니다.' });
+            }
         }
-
-        const result = await User.MgetUserDetails(userId);
-        if (result.length > 0) {
-            const user = result[0];
-            res.json({ result: true, data: { id: user.user_login_id, pw: user.user_pw, nickname: user.user_nickname } });
-        } else {
-            res.json({ result: false, message: '사용자를 찾을 수 없습니다.' });
-        }
+        
     } catch (error) {
         console.error('Error in getUserDetails:', error);
         res.status(500).json({ result: false, message: '서버 에러', error: error.message });
@@ -110,8 +110,8 @@ exports.Cupdate = async (req, res) => {
         const userId = req.params.id;
         if(!id || !pw || !username ){
             res.status(403).json({message:'정보를 모두 입력해주세요'});
-        }
-        console.log('User:', req.user.id,req.user.pw,req.user.username, userId);
+        }else{
+            console.log('User:', req.user.id,req.user.pw,req.user.username, userId);
         let updateData = { ...req.body ,user_id: userId};
         console.log('Update Data before password handling:', updateData);
         if (req.body.pw) {
@@ -124,6 +124,8 @@ exports.Cupdate = async (req, res) => {
         console.log('Update Result:', result);
 
         res.json({ result: true, message: '회원정보가 성공적으로 수정되었습니다.' });
+        }
+        
     } catch (error) {
         console.error('Error in Cupdate:', error);
         res.status(500).json({ result: false, message: '서버 에러', error: error.message });

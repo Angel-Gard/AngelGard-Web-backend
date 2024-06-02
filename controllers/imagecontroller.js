@@ -40,21 +40,23 @@ exports.uploadImage = [
     async (req, res) => {
         if (!req.file) {
             return res.status(407).json({ message: '이미지 파일만 업로드 가능합니다.' });
+        }else{
+            console.log("req : ",req.file);
+            const newInfo = req.body;
+
+            let filePath = '';
+            const userId = req.params.id;
+            if (req.file) {
+                filePath = "http://localhost:3000/image/" +req.file.filename;
+                console.log("file Path : ",filePath);
+                newInfo["imageFile"] = filePath;
+            }
+            // 여기에 데이터베이스 저장 로직 추가 가능
+            const result = await qimage.imageup({filePath,userId});
+            res.status(200).json({result});
         }
 
-        console.log("req : ",req.file);
-        const newInfo = req.body;
-
-        let filePath = '';
-        const userId = req.params.id;
-        if (req.file) {
-            filePath = "http://localhost:3000/image/" +req.file.filename;
-            console.log("file Path : ",filePath);
-            newInfo["imageFile"] = filePath;
-        }
-        // 여기에 데이터베이스 저장 로직 추가 가능
-        const result = await qimage.imageup({filePath,userId});
-        res.status(200).json({result});
+        
     }
 ];
 
