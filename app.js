@@ -45,7 +45,7 @@ app.use("/test", testRouter);
 app.use("/board", boardRouter);
 app.use("/comment", commentRouter);
 app.use("/like", likeRouter);
-app.use("/baby", babyRouter);
+app.use("/mypage", babyRouter);
 
 app.use("/", indexRouter);
 app.use("/user", userRouter);
