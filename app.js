@@ -15,7 +15,7 @@ const babyRouter = require("./routes/babyrouter");
 
 const indexRouter = require("./routes/index");
 const userRouter = require("./routes/user");
-const imageRouter = require('./routes/image');
+const imageRouter = require("./routes/image");
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -49,7 +49,10 @@ app.use("/baby", babyRouter);
 
 app.use("/", indexRouter);
 app.use("/user", userRouter);
-app.use('/image', imageRouter);
+app.use("/image", imageRouter);
+
+// 이미지 반환
+app.use("/image/thumbnails", express.static("./image/thumbnails"));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
