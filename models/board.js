@@ -107,8 +107,9 @@ module.exports = {
     deleteBoard: async function (req, res) {
         const boardId = req.params.board_id;
 
-        // 게시글 댓글 삭제
+        // 게시글 댓글, 좋아요 삭제
         var DeletedComments = false; // 댓글 삭제 확인
+        var Deletedlikes = false; // 좋아요 삭제 확인
         const sql1 = `SELECT count(*) AS count FROM comment WHERE board_id = ?`;
         const [rows1] = await db.query(sql1, [Number(boardId)]);
 
@@ -129,8 +130,29 @@ module.exports = {
             // 댓글이 없으면
             DeletedComments = true;
         }
+        const sql3 = `SELECT count(*) AS count FROM comment WHERE board_id = ?`;
+        const [rows3] = await db.query(sql3, [Number(req.params.board_id)]);
+        // 좋아요 개수
+        const totalCount3 = Number(rows3[0].count);
 
-        if (DeletedComments) {
+        // 좋아요 개수가 있다면 삭제
+        if (totalCount3 > 0) {
+            const sql4 = `DELETE FROM likes WHERE board_id = ?`;
+            const [rows4] = await db.query(sql4, [Number(req.params.board_id)]);
+
+            // 삭제 실패
+            if (rows4.affectedRows === 0) {
+                console.log(`board_id ${boardId} : 게시글 좋아요 삭제 실패`);
+                Deletedlikes = false;
+            } else {
+                Deletedlikes = true;
+            }
+        } else {
+            // 좋아요 개수가 없으면
+            Deletedlikes = true;
+        }
+
+        if (DeletedComments && Deletedlikes) {
             const sql = `DELETE FROM board WHERE board_id=?`;
             const [rows] = await db.query(sql, [Number(boardId)]);
 
