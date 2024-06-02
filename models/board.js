@@ -4,7 +4,7 @@ const db = require("../config/db");
 module.exports = {
     selectBoardList: async function (req, res) {
         const pageNum = Number(req.query.page) || 1; // 쿼리스트링으로 받을 페이지 번호 값, 기본값은 1
-        const contentSize = 10; // 페이지에서 보여줄 컨텐츠 수.
+        const contentSize = 5; // 페이지에서 보여줄 컨텐츠 수.
         const pnSize = 5; // 페이지네이션 개수 설정.
         const skipSize = (pageNum - 1) * contentSize; // 다음 페이지 갈 때 건너뛸 리스트 개수.
 
@@ -16,14 +16,26 @@ module.exports = {
         const pnStart = (Math.ceil(pageNum / pnSize) - 1) * pnSize + 1; // 현재 페이지의 페이지네이션 시작 번호.
         let pnEnd = pnStart + pnSize - 1; // 현재 페이지의 페이지네이션 끝 번호.
 
-        const sql2 = `SELECT board.board_id, board.board_title, board.board_date, user.user_nickname 
+        const sql2 = `SELECT board.board_id, board.board_title, board.board_date, user.user_nickname, board.board_thumbnail, COUNT(likes.like_id) AS like_count
         FROM board LEFT JOIN user ON board.user_id = user.user_id 
+        LEFT JOIN likes ON board.board_id = likes.board_id
+        GROUP BY board.board_id
         ORDER BY board_id DESC LIMIT ?, ?`;
         const [rows2] = await db.query(sql2, [skipSize, contentSize]);
         if (rows2.length === 0) {
             console.log(`게시글 목록 조회 실패`);
             return false;
         }
+
+        // 날짜 형식을 yyyy-mm-dd로 변환
+        rows2.forEach((row) => {
+            const date = new Date(row.board_date);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0"); // 월을 2자리로 변환
+            const day = String(date.getDate()).padStart(2, "0"); // 일을 2자리로 변환
+            row.board_date = `${year}.${month}.${day}`;
+        });
+
         const result = {
             pageNum,
             pnStart,
@@ -42,11 +54,19 @@ module.exports = {
             console.log(`board_id ${req.params.board_id} : 게시글 조회 실패`);
             return false;
         }
-        return rows[0];
+
+        // 날짜 형식을 yyyy-mm-dd로 변환
+        const board = rows[0];
+        const date = new Date(board.board_date);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0"); // 월을 2자리로 변환
+        const day = String(date.getDate()).padStart(2, "0"); // 일을 2자리로 변환
+        board.board_date = `${year}.${month}.${day}`;
+        return board;
     },
-    createBoard: async function (req, res) {
-        const sql = `INSERT INTO board (user_id, board_title, board_content, board_date) VALUES(?,?,?,NOW())`;
-        const [rows] = await db.query(sql, [Number(req.body.user_id), req.body.board_title, req.body.board_content]);
+    createBoard: async function (req, filePath) {
+        const sql = `INSERT INTO board (user_id, board_title, board_content, board_thumbnail, board_date) VALUES(?,?,?,?,NOW())`;
+        const [rows] = await db.query(sql, [Number(req.body.user_id), req.body.board_title, req.body.board_content, filePath]);
         if (rows.affectedRows === 0) {
             console.log(`게시글 생성 실패`);
             return false;
@@ -54,7 +74,7 @@ module.exports = {
         return Number(rows.insertId);
     },
     updateBoard: async function (req, res) {
-        const sql = `SELECT board_title, board_content 
+        const sql = `SELECT board_title, board_content, board_thumbnail 
                     FROM board WHERE board_id = ?`;
         const [rows] = await db.query(sql, [Number(req.params.board_id)]);
         if (rows.length === 0) {
@@ -63,14 +83,25 @@ module.exports = {
         }
         return rows[0];
     },
-    updateBoardProcess: async function (req, res) {
-        const sql = `UPDATE board SET board_title=?, board_content=? WHERE board_id = ?`;
-        const [rows] = await db.query(sql, [req.body.board_title, req.body.board_content, Number(req.params.board_id)]);
-
-        if (rows.affectedRows === 0) {
-            console.log(`board_id ${req.params.board_id} : 게시글 수정 실패`);
-            return false;
+    updateBoardProcess: async function (req, filePath) {
+        if (filePath !== "null") {
+            // 이미지 변경이 있을 경우
+            const sql = `UPDATE board SET board_title=?, board_content=?, board_thumbnail=? WHERE board_id = ?`;
+            const [rows] = await db.query(sql, [req.body.board_title, req.body.board_content, filePath, Number(req.params.board_id)]);
+            if (rows.affectedRows === 0) {
+                console.log(`board_id ${req.params.board_id} : 게시글 수정 실패`);
+                return false;
+            }
+        } else {
+            // 이미지 변경이 없을 경우
+            const sql = `UPDATE board SET board_title=?, board_content=? WHERE board_id = ?`;
+            const [rows] = await db.query(sql, [req.body.board_title, req.body.board_content, Number(req.params.board_id)]);
+            if (rows.affectedRows === 0) {
+                console.log(`board_id ${req.params.board_id} : 게시글 수정 실패`);
+                return false;
+            }
         }
+
         return true;
     },
     deleteBoard: async function (req, res) {
@@ -113,5 +144,14 @@ module.exports = {
         }
 
         return false;
+    },
+    selectImage: async function (req, res) {
+        const sql = `SELECT board_thumbnail FROM board WHERE board_id = ?`;
+        const [rows] = await db.query(sql, [Number(req.params.board_id)]);
+        if (rows.length === 0) {
+            console.log(`board_id ${req.params.board_id} : 이미지 조회 실패`);
+            return false;
+        }
+        return rows[0];
     },
 };

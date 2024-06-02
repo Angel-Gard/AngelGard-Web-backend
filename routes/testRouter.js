@@ -97,10 +97,10 @@ router.get("/comment/delete/:comment_id", function (req, res, next) {
     res.send(html);
 });
 
-router.get("/create", function (req, res, next) {
+router.get("/babycreate", function (req, res, next) {
     var html = `
         <html>
-            <form action="baby/create" method="post">
+            <form action="mypage/babycreate" method="post">
             <label for="user_id">User ID:</label>
             <input type="text" id="user_id" name="user_id"><br><br>
             
@@ -128,10 +128,10 @@ router.get("/create", function (req, res, next) {
     res.send(html);
 });
 
-router.get("/update/:user_id/:baby_id", function (req, res, next) {
+router.get("/babyupdate/:user_id/:baby_id", function (req, res, next) {
   var html = `
       <html>
-          <form action="/baby/update/${req.params.user_id}/${req.params.baby_id}" method="post">
+          <form action="/mypage/babyupdate/${req.params.user_id}/${req.params.baby_id}" method="post">
               <label for="baby_name">아이 이름:</label>
               <input type="text" id="baby_name" name="baby_name"><br><br>
               <label for="baby_birth">생년월일:</label>
@@ -151,14 +151,17 @@ router.get("/update/:user_id/:baby_id", function (req, res, next) {
   res.send(html);
 });
 
-router.get("/delete/:user_id/:baby_id", function (req, res, next) {
-  var html = `
-      <html>
-          <form action="/baby/delete/${req.params.user_id}/${req.params.baby_id}" method="post">
-              <input type="submit" value="삭제">
-          </form>
-      </html>`;
-  res.send(html);
-});
+router.get("/babydelete/:user_id/:baby_id", function (req, res, next) {
+    var html = `
+        <html>
+            <form action="/mypage/babydelete/${req.params.user_id}/${req.params.baby_id}" method="post">
+                <input type="submit" value="삭제">
+            </form>
+        </html>`;
+    res.send(html);
+  });
+
+
+
 
 module.exports = router;
