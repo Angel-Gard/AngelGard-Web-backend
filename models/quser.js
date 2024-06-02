@@ -21,11 +21,16 @@ exports.Mlogin = async (data) => {
     return rows;
 };
 
-exports.Minfo = async (id) => {
-    const query = `SELECT * FROM user WHERE user_login_id = ?`;
-    console.log('Executing query:', query, 'with ID:', id); // 로그 추가
-    const [rows] = await pool.query(query, [id]);
-    return rows;
+exports.MgetUserDetails = async (id) => {
+    const query = `SELECT user_login_id, user_pw, user_nickname FROM user WHERE user_login_id = ?`;
+    try {
+        console.log('Executing query:', query, 'with ID:', id); // 로그 추가
+        const [rows] = await pool.query(query, [id]);
+        return rows;
+    } catch (error) {
+        console.error('Database Query Error:', error);
+        throw error;
+    }
 };
 
 
@@ -51,20 +56,6 @@ exports.Mupdate = async (data) => {
 exports.Mdelete = async (data) => {
     const query = `DELETE FROM user user_id = ?`;
     const [result] = await pool.query(query, [data.id]);
-    return result;
-};
-
-//이미지 경로 저장
-exports.imageup = async (data) => {
-    const query = `INSERT INTO user (user_image) VALUES (?)`
-    const [result] = await pool.query(query,[data.filePath]);
-    return result;
-};
-
-//이미지 조회 getimage
-exports.getimage = async (data) => {
-    const query = `SELECT * FROM image WHERE user_login_id = ?`;
-    const [result] = await pool.query(query,[data.id]);
     return result;
 };
 

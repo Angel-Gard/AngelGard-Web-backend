@@ -106,12 +106,12 @@ exports.getUserDetails = async (req, res) => {
 // 회원정보 수정
 exports.Cupdate = async (req, res) => {
     try {
+        const {id ,pw,username} = req.body;
         const userId = req.params.id;
-        if (!req.user) {
-            console.log('No user in request');
-            return res.status(401).json({ result: false, message: '인증 실패' });
+        if(!id || !pw || !username ){
+            res.status(403).json({message:'정보를 모두 입력해주세요'});
         }
-        console.log('User:', req.user.id,req.user.pw,req.user.username,userId);
+        console.log('User:', req.user.id,req.user.pw,req.user.username, userId);
         let updateData = { ...req.body ,user_id: userId};
         console.log('Update Data before password handling:', updateData);
         if (req.body.pw) {
