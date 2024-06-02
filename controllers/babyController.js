@@ -45,7 +45,7 @@ module.exports = {
                 res.status(404).json({message: "아기를 찾을 수 없습니다."});
                 return;
             }
-            res.status(200).json({ baby: baby });
+            res.status(200).json({ baby: baby });   
         } catch (err) {
              next(err);
         }
@@ -56,7 +56,7 @@ module.exports = {
             const updateData = req.body;
             await babys.updateBaby(user_id, baby_id, updateData);
             const updatedBaby = await babys.getBabyById(user_id, baby_id);
-            res.status(200).json( { baby: updatedBaby });
+            res.status(200).json( { baby: updatedBaby,message: " 수정이완료되었습니다." });
         } catch (err) {
             next(err);
         }
