@@ -32,11 +32,17 @@ app.use(express.static(path.join(__dirname, "public")));
 // CORS 처리 -- 수정필요
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*"); // 모든 출처 허용
-    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE"); // 허용할 HTTP 메서드
-    res.header("Access-Control-Allow-Headers", "Content-Type"); // 허용할 헤더
+    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE, OPTIONS"); // 허용할 HTTP 메서드
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization"); // 허용할 헤더
+    res.header("Access-Control-Allow-Credentials", "true"); // 자격 증명 허용
     next();
 });
 // CORS
+
+// OPTIONS 메서드에 대한 핸들러 추가 (프리플라이트 요청 처리)
+app.options('*', (req, res) => {
+    res.sendStatus(200); // 모든 경로에 대해 200 OK 반환
+});
 
 // 라우터 사용
 app.use("/", indexRouter);
