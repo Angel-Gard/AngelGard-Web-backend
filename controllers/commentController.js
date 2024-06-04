@@ -18,6 +18,11 @@ module.exports = {
     },
     // 댓글 생성
     createComment: async function (req, res, next) {
+        if (!req.body.comment_content || req.body.comment_content === "") {
+            console.log("no comment_content");
+            return res.status(400).json({ message: "댓글 내용을 입력해주세요.", success: false });
+        }
+
         await comments
             .createComment(req)
             .then((result) => {

@@ -8,7 +8,7 @@ module.exports = {
 
         const totalCount = Number(rows1[0].count);
 
-        const sql = `SELECT user.user_nickname, comment_date, comment_content, comment.user_id FROM comment 
+        const sql = `SELECT user.user_image, user.user_nickname, comment_date, comment_content, comment.user_id FROM comment 
         LEFT JOIN user ON comment.user_id=user.user_id WHERE board_id = ?`;
         const [rows] = await db.query(sql, [Number(req.params.board_id)]);
         if (rows.length === 0) {

@@ -16,7 +16,12 @@ module.exports = {
         const pnStart = (Math.ceil(pageNum / pnSize) - 1) * pnSize + 1; // 현재 페이지의 페이지네이션 시작 번호.
         let pnEnd = pnStart + pnSize - 1; // 현재 페이지의 페이지네이션 끝 번호.
 
-        const sql2 = `SELECT board.board_id, board.board_title, board.board_date, user.user_nickname, board.board_thumbnail, COUNT(likes.like_id) AS like_count
+        // 마지막 페이지 페이지네이션 끝 번호 처리
+        if (pnEnd > pnTotal && Math.floor(pnEnd / pnSize) - 1 === Math.floor(pnTotal / pnSize)) {
+            pnEnd = pnTotal;
+        }
+
+        const sql2 = `SELECT board.board_id, board.board_title, board.board_date, user.user_nickname, board.board_thumbnail, COUNT(likes.like_id) AS like_count, user.user_image
         FROM board LEFT JOIN user ON board.user_id = user.user_id 
         LEFT JOIN likes ON board.board_id = likes.board_id
         GROUP BY board.board_id
@@ -47,7 +52,7 @@ module.exports = {
         return result;
     },
     selectBoard: async function (req, res) {
-        const sql = `SELECT board.board_date, user.user_nickname, board.board_title, board.board_content, board.user_id
+        const sql = `SELECT board.board_date, user.user_nickname, board.board_title, board.board_content, board.user_id, user.user_image
         FROM board LEFT JOIN user ON board.user_id = user.user_id WHERE board_id = ?`;
         const [rows] = await db.query(sql, [Number(req.params.board_id)]);
         if (rows.length === 0) {
@@ -61,7 +66,7 @@ module.exports = {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, "0"); // 월을 2자리로 변환
         const day = String(date.getDate()).padStart(2, "0"); // 일을 2자리로 변환
-        board.board_date = `${year}.${month}.${day}`;
+        board.board_date = `${year}-${month}-${day}`;
         return board;
     },
     createBoard: async function (req, filePath) {
@@ -175,5 +180,108 @@ module.exports = {
             return false;
         }
         return rows[0];
+    },
+    selectLikedBoardList: async function (req, res) {
+        console.log(req.params.user_id);
+        const pageNum = Number(req.query.page) || 1; // 쿼리스트링으로 받을 페이지 번호 값, 기본값은 1
+        const contentSize = 5; // 페이지에서 보여줄 컨텐츠 수.
+        const pnSize = 5; // 페이지네이션 개수 설정.
+        const skipSize = (pageNum - 1) * contentSize; // 다음 페이지 갈 때 건너뛸 리스트 개수.
+
+        const sql = `SELECT count(*) AS count FROM likes
+            WHERE user_id = ?`;
+        const [rows] = await db.query(sql, [Number(req.params.user_id)]);
+        console.log(rows[0].count);
+
+        const totalCount = Number(rows[0].count); // 전체 글 개수.
+        const pnTotal = Math.ceil(totalCount / contentSize); // 페이지네이션의 전체 카운트
+        const pnStart = (Math.ceil(pageNum / pnSize) - 1) * pnSize + 1; // 현재 페이지의 페이지네이션 시작 번호.
+        let pnEnd = pnStart + pnSize - 1; // 현재 페이지의 페이지네이션 끝 번호.
+
+        // 마지막 페이지 페이지네이션 끝 번호 처리
+        if (pnEnd > pnTotal && Math.floor(pnEnd / pnSize) - 1 === Math.floor(pnTotal / pnSize)) {
+            pnEnd = pnTotal;
+        }
+
+        const sql2 = `SELECT board.board_id, board.board_title, board.board_date, user.user_nickname, board.board_thumbnail, COUNT(likes.like_id) AS like_count, user.user_image
+            FROM board LEFT JOIN user ON board.user_id = user.user_id 
+            LEFT JOIN likes ON board.board_id = likes.board_id
+            WHERE likes.user_id =?
+            GROUP BY board.board_id
+            ORDER BY board_id DESC LIMIT ?, ?`;
+        const [rows2] = await db.query(sql2, [Number(req.params.user_id), skipSize, contentSize]);
+        if (rows2.length === 0) {
+            console.log(`게시글 목록 조회 실패`);
+            return false;
+        }
+
+        // 날짜 형식을 yyyy-mm-dd로 변환
+        rows2.forEach((row) => {
+            const date = new Date(row.board_date);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0"); // 월을 2자리로 변환
+            const day = String(date.getDate()).padStart(2, "0"); // 일을 2자리로 변환
+            row.board_date = `${year}.${month}.${day}`;
+        });
+
+        const result = {
+            pageNum,
+            pnStart,
+            pnEnd,
+            pnTotal,
+            contents: rows2,
+        };
+
+        return result;
+    },
+    selectPostedBoardList: async function (req, res) {
+        const pageNum = Number(req.query.page) || 1; // 쿼리스트링으로 받을 페이지 번호 값, 기본값은 1
+        const contentSize = 5; // 페이지에서 보여줄 컨텐츠 수.
+        const pnSize = 5; // 페이지네이션 개수 설정.
+        const skipSize = (pageNum - 1) * contentSize; // 다음 페이지 갈 때 건너뛸 리스트 개수.
+
+        const sql = `SELECT count(*) AS count FROM board
+        WHERE user_id = ?`;
+        const [rows] = await db.query(sql, [Number(req.params.user_id)]);
+
+        const totalCount = Number(rows[0].count); // 전체 글 개수.
+        const pnTotal = Math.ceil(totalCount / contentSize); // 페이지네이션의 전체 카운트
+        const pnStart = (Math.ceil(pageNum / pnSize) - 1) * pnSize + 1; // 현재 페이지의 페이지네이션 시작 번호.
+        let pnEnd = pnStart + pnSize - 1; // 현재 페이지의 페이지네이션 끝 번호.
+
+        // 마지막 페이지 페이지네이션 끝 번호 처리
+        if (pnEnd > pnTotal && Math.floor(pnEnd / pnSize) - 1 === Math.floor(pnTotal / pnSize)) {
+            pnEnd = pnTotal;
+        }
+        const sql2 = `SELECT board.board_id, board.board_title, board.board_date, user.user_nickname, board.board_thumbnail, COUNT(likes.like_id) AS like_count, user.user_image
+        FROM board LEFT JOIN user ON board.user_id = user.user_id 
+        LEFT JOIN likes ON board.board_id = likes.board_id
+        WHERE board.user_id = ?
+        GROUP BY board.board_id
+        ORDER BY board_id DESC LIMIT ?, ?`;
+        const [rows2] = await db.query(sql2, [Number(req.params.user_id), skipSize, contentSize]);
+        if (rows2.length === 0) {
+            console.log(`게시글 목록 조회 실패`);
+            return false;
+        }
+
+        // 날짜 형식을 yyyy-mm-dd로 변환
+        rows2.forEach((row) => {
+            const date = new Date(row.board_date);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0"); // 월을 2자리로 변환
+            const day = String(date.getDate()).padStart(2, "0"); // 일을 2자리로 변환
+            row.board_date = `${year}.${month}.${day}`;
+        });
+
+        const result = {
+            pageNum,
+            pnStart,
+            pnEnd,
+            pnTotal,
+            contents: rows2,
+        };
+
+        return result;
     },
 };

@@ -59,7 +59,7 @@ module.exports = {
                 if (result) {
                     res.status(200).json(result);
                 } else {
-                    res.status(404).json({ message: "게시글 목록이 존재하지 않습니다." });
+                    res.status(404).json({ message: "게시글 목록이 존재하지 않습니다.", success: false });
                 }
             })
             .catch((err) => {
@@ -74,7 +74,7 @@ module.exports = {
                 if (result) {
                     res.status(200).json(result);
                 } else {
-                    res.status(404).json({ message: "게시글을 찾을 수 없습니다." });
+                    res.status(404).json({ message: "게시글을 찾을 수 없습니다.", success: false });
                 }
             })
             .catch((err) => {
@@ -83,12 +83,22 @@ module.exports = {
     },
     // 게시글 생성
     createBoard: async function (req, res, next) {
+        if (req.body.board_title === "" || !req.body.board_title) {
+            console.log("no board_title");
+            return res.status(400).json({ message: "게시글 제목을 입력해주세요", success: false });
+        }
+
+        if (req.body.board_content === "" || !req.body.board_content) {
+            console.log("no board_content");
+            return res.status(400).json({ message: "게시글 내용을 입력해주세요", success: false });
+        }
+
         let filePath = "null"; // 이미지 경로 -- default 'null'
         upload.single("board_thumbnail")(req, res, async (err) => {
             try {
                 if (req.file) {
                     // 이미지가 있을 경우
-                    filePath = "http://localhost:3000/image/thumbnails/" + req.file.filename;
+                    filePath = "http://louk342.iptime.org:3000/image/thumbnails/" + req.file.filename;
                 }
 
                 await boards
@@ -133,7 +143,7 @@ module.exports = {
             try {
                 if (req.file) {
                     // 이미지가 있을 경우
-                    filePath = "http://localhost:3000/image/thumbnails/" + req.file.filename;
+                    filePath = "http://louk342.iptime.org:3000/image/thumbnails/" + req.file.filename;
                 }
                 await boards
                     .selectImage(req)
@@ -186,6 +196,36 @@ module.exports = {
                     res.status(200).json({ message: "게시글 삭제 완료", success: true });
                 } else {
                     res.status(404).json({ message: "게시글 삭제 실패", success: false });
+                }
+            })
+            .catch((err) => {
+                next(err);
+            });
+    },
+    // 좋아요 목록
+    selectLikedBoardList: async function (req, res, next) {
+        await boards
+            .selectLikedBoardList(req)
+            .then((result) => {
+                if (result) {
+                    res.status(200).json(result);
+                } else {
+                    res.status(404).json({ message: "좋아요 목록이 존재하지 않습니다.", success: false });
+                }
+            })
+            .catch((err) => {
+                next(err);
+            });
+    },
+    // 작성한 목록
+    selectPostedBoardList: async function (req, res, next) {
+        await boards
+            .selectPostedBoardList(req)
+            .then((result) => {
+                if (result) {
+                    res.status(200).json(result);
+                } else {
+                    res.status(404).json({ message: "작성한 목록이 존재하지 않습니다.", success: false });
                 }
             })
             .catch((err) => {
