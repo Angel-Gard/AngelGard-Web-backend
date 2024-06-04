@@ -60,6 +60,8 @@ app.use("/image", imageRouter);
 // 이미지 반환
 app.use("/image/thumbnails", express.static("./image/thumbnails"));
 
+app.use("/image", express.static("./image"));
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     next(createError(404));

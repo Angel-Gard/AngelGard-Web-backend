@@ -6,7 +6,7 @@ const qimage = require('../models/qimage'); // 쿼리 모델
 // Multer 설정 아이디를 가지고 파일이름을 아이디로 하기
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const dir = path.join(__dirname, '../image');
+        const dir = path.join(__dirname, '../image/proflie');
         return cb(null, dir);
     },
     filename: function (req, file, cb) {
@@ -47,7 +47,7 @@ exports.uploadImage = [
             let filePath = '';
             const userId = req.params.id;
             if (req.file) {
-                filePath = "http://localhost:3000/image/" +req.file.filename;
+                filePath = "http://louk342.iptime.org:3000/image/profile/" +req.file.filename;
                 console.log("file Path : ",filePath);
                 newInfo["imageFile"] = filePath;
             }
