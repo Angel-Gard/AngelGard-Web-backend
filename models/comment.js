@@ -35,6 +35,12 @@ module.exports = {
         return result;
     },
     createComment: async function (req, res) {
+        if (!req.body.comment_content || req.body.comment_content === "") {
+            console.log("no comment_content");
+            // comment_content가 없으면
+            return "a";
+        }
+
         const sql = `INSERT INTO comment (board_id, user_id, comment_content, comment_date ) VALUES(?,?,?,NOW())`;
         const [rows] = await db.query(sql, [Number(req.body.board_id), Number(req.body.user_id), req.body.comment_content]);
         if (rows.affectedRows === 0) {

@@ -70,6 +70,17 @@ module.exports = {
         return board;
     },
     createBoard: async function (req, filePath) {
+        if (req.body.board_title === "" || !req.body.board_title) {
+            console.log("no board_title");
+            // board_title이 ""이거나 null일때
+            return "a";
+        }
+
+        if (req.body.board_content === "" || !req.body.board_content) {
+            console.log("no board_content");
+            // board_content가 ""이거나 null일때
+            return "b";
+        }
         const sql = `INSERT INTO board (user_id, board_title, board_content, board_thumbnail, board_date) VALUES(?,?,?,?,NOW())`;
         const [rows] = await db.query(sql, [Number(req.body.user_id), req.body.board_title, req.body.board_content, filePath]);
         if (rows.affectedRows === 0) {

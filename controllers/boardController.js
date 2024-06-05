@@ -83,16 +83,6 @@ module.exports = {
     },
     // 게시글 생성
     createBoard: async function (req, res, next) {
-        if (req.body.board_title === "" || !req.body.board_title) {
-            console.log("no board_title");
-            return res.status(400).json({ message: "게시글 제목을 입력해주세요", success: false });
-        }
-
-        if (req.body.board_content === "" || !req.body.board_content) {
-            console.log("no board_content");
-            return res.status(400).json({ message: "게시글 내용을 입력해주세요", success: false });
-        }
-
         let filePath = "null"; // 이미지 경로 -- default 'null'
         upload.single("board_thumbnail")(req, res, async (err) => {
             try {
@@ -105,7 +95,26 @@ module.exports = {
                     .createBoard(req, filePath)
                     .then((result) => {
                         if (result) {
-                            res.status(200).json({ board_id: result, message: "게시글 생성 완료", success: true });
+                            if (result === "a") {
+                                if (filePath !== "null") {
+                                    // 파일 경로에서 파일명 추출
+                                    let filename = path.basename(filePath);
+                                    // 이미지 삭제 함수 호출
+                                    deleteImage(filename);
+                                }
+                                return res.status(400).json({ message: "게시글 제목을 입력해주세요", success: false });
+                            }
+                            if (result === "b") {
+                                if (filePath !== "null") {
+                                    // 파일 경로에서 파일명 추출
+                                    let filename = path.basename(filePath);
+                                    // 이미지 삭제 함수 호출
+                                    deleteImage(filename);
+                                }
+                                return res.status(400).json({ message: "게시글 내용을 입력해주세요", success: false });
+                            } else {
+                                res.status(200).json({ board_id: result, message: "게시글 생성 완료", success: true });
+                            }
                         } else {
                             res.status(404).json({ message: "게시글 생성 실패", success: false });
                         }

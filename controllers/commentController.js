@@ -18,16 +18,15 @@ module.exports = {
     },
     // 댓글 생성
     createComment: async function (req, res, next) {
-        if (!req.body.comment_content || req.body.comment_content === "") {
-            console.log("no comment_content");
-            return res.status(400).json({ message: "댓글 내용을 입력해주세요.", success: false });
-        }
-
         await comments
             .createComment(req)
             .then((result) => {
                 if (result) {
-                    res.status(200).json({ message: "댓글 생성 완료", success: true });
+                    if (result === "a") {
+                        return res.status(400).json({ message: "댓글 내용을 입력해주세요.", success: false });
+                    } else {
+                        res.status(200).json({ message: "댓글 생성 완료", success: true });
+                    }
                 } else {
                     res.status(404).json({ message: "댓글 생성 실패", success: false });
                 }
