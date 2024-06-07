@@ -8,7 +8,7 @@ boardRouter.post("/write", boardController.createBoard);
 boardRouter.get("/update/:board_id", boardController.updateBoard);
 boardRouter.put("/update/:board_id", boardController.updateBoardProcess);
 boardRouter.delete("/:board_id", boardController.deleteBoard);
-boardRouter.get("/likedlist/:user_id", boardController.selectLikedBoardList);
-boardRouter.get("/postedlist/:user_id", boardController.selectPostedBoardList);
+boardRouter.get("/likedlist/:user_login_id", boardController.selectLikedBoardList);
+boardRouter.get("/postedlist/:user_login_id", boardController.selectPostedBoardList);
 
 module.exports = boardRouter;

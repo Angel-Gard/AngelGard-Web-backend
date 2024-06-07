@@ -21,8 +21,8 @@ module.exports = {
             pnEnd = pnTotal;
         }
 
-        const sql2 = `SELECT board.board_id, board.board_title, board.board_date, user.user_nickname, board.board_thumbnail, COUNT(likes.like_id) AS like_count, user.user_image
-        FROM board LEFT JOIN user ON board.user_id = user.user_id 
+        const sql2 = `SELECT board.board_id, board.board_title, board.board_date, user.user_nickname, board.board_thumbnail, COUNT(likes.likes_id) AS like_count, user.user_image
+        FROM board LEFT JOIN user ON board.user_login_id = user.user_login_id 
         LEFT JOIN likes ON board.board_id = likes.board_id
         GROUP BY board.board_id
         ORDER BY board_id DESC LIMIT ?, ?`;
@@ -52,8 +52,8 @@ module.exports = {
         return result;
     },
     selectBoard: async function (req, res) {
-        const sql = `SELECT board.board_date, user.user_nickname, board.board_title, board.board_content, board.user_id, user.user_image
-        FROM board LEFT JOIN user ON board.user_id = user.user_id WHERE board_id = ?`;
+        const sql = `SELECT board.board_date, user.user_nickname, board.board_title, board.board_content, board.user_login_id, user.user_image
+        FROM board LEFT JOIN user ON board.user_login_id = user.user_login_id WHERE board_id = ?`;
         const [rows] = await db.query(sql, [Number(req.params.board_id)]);
         if (rows.length === 0) {
             console.log(`board_id ${req.params.board_id} : 게시글 조회 실패`);
@@ -70,19 +70,8 @@ module.exports = {
         return board;
     },
     createBoard: async function (req, filePath) {
-        if (req.body.board_title === "" || !req.body.board_title) {
-            console.log("no board_title");
-            // board_title이 ""이거나 null일때
-            return "a";
-        }
-
-        if (req.body.board_content === "" || !req.body.board_content) {
-            console.log("no board_content");
-            // board_content가 ""이거나 null일때
-            return "b";
-        }
-        const sql = `INSERT INTO board (user_id, board_title, board_content, board_thumbnail, board_date) VALUES(?,?,?,?,NOW())`;
-        const [rows] = await db.query(sql, [Number(req.body.user_id), req.body.board_title, req.body.board_content, filePath]);
+        const sql = `INSERT INTO board (user_login_id, board_title, board_content, board_thumbnail, board_date) VALUES(?,?,?,?,NOW())`;
+        const [rows] = await db.query(sql, [req.body.user_login_id, req.body.board_title, req.body.board_content, filePath]);
         if (rows.affectedRows === 0) {
             console.log(`게시글 생성 실패`);
             return false;
@@ -193,16 +182,14 @@ module.exports = {
         return rows[0];
     },
     selectLikedBoardList: async function (req, res) {
-        console.log(req.params.user_id);
         const pageNum = Number(req.query.page) || 1; // 쿼리스트링으로 받을 페이지 번호 값, 기본값은 1
         const contentSize = 5; // 페이지에서 보여줄 컨텐츠 수.
         const pnSize = 5; // 페이지네이션 개수 설정.
         const skipSize = (pageNum - 1) * contentSize; // 다음 페이지 갈 때 건너뛸 리스트 개수.
 
         const sql = `SELECT count(*) AS count FROM likes
-            WHERE user_id = ?`;
-        const [rows] = await db.query(sql, [Number(req.params.user_id)]);
-        console.log(rows[0].count);
+            WHERE user_login_id = ?`;
+        const [rows] = await db.query(sql, [req.params.user_login_id]);
 
         const totalCount = Number(rows[0].count); // 전체 글 개수.
         const pnTotal = Math.ceil(totalCount / contentSize); // 페이지네이션의 전체 카운트
@@ -214,13 +201,13 @@ module.exports = {
             pnEnd = pnTotal;
         }
 
-        const sql2 = `SELECT board.board_id, board.board_title, board.board_date, user.user_nickname, board.board_thumbnail, COUNT(likes.like_id) AS like_count, user.user_image
-            FROM board LEFT JOIN user ON board.user_id = user.user_id 
+        const sql2 = `SELECT board.board_id, board.board_title, board.board_date, user.user_nickname, board.board_thumbnail, COUNT(likes.likes_id) AS like_count, user.user_image
+            FROM board LEFT JOIN user ON board.user_login_id = user.user_login_id 
             LEFT JOIN likes ON board.board_id = likes.board_id
-            WHERE likes.user_id =?
+            WHERE likes.user_login_id =?
             GROUP BY board.board_id
             ORDER BY board_id DESC LIMIT ?, ?`;
-        const [rows2] = await db.query(sql2, [Number(req.params.user_id), skipSize, contentSize]);
+        const [rows2] = await db.query(sql2, [req.params.user_login_id, skipSize, contentSize]);
         if (rows2.length === 0) {
             console.log(`게시글 목록 조회 실패`);
             return false;
@@ -252,8 +239,8 @@ module.exports = {
         const skipSize = (pageNum - 1) * contentSize; // 다음 페이지 갈 때 건너뛸 리스트 개수.
 
         const sql = `SELECT count(*) AS count FROM board
-        WHERE user_id = ?`;
-        const [rows] = await db.query(sql, [Number(req.params.user_id)]);
+        WHERE user_login_id = ?`;
+        const [rows] = await db.query(sql, [req.params.user_login_id]);
 
         const totalCount = Number(rows[0].count); // 전체 글 개수.
         const pnTotal = Math.ceil(totalCount / contentSize); // 페이지네이션의 전체 카운트
@@ -264,13 +251,13 @@ module.exports = {
         if (pnEnd > pnTotal && Math.floor(pnEnd / pnSize) - 1 === Math.floor(pnTotal / pnSize)) {
             pnEnd = pnTotal;
         }
-        const sql2 = `SELECT board.board_id, board.board_title, board.board_date, user.user_nickname, board.board_thumbnail, COUNT(likes.like_id) AS like_count, user.user_image
-        FROM board LEFT JOIN user ON board.user_id = user.user_id 
+        const sql2 = `SELECT board.board_id, board.board_title, board.board_date, user.user_nickname, board.board_thumbnail, COUNT(likes.likes_id) AS like_count, user.user_image
+        FROM board LEFT JOIN user ON board.user_login_id = user.user_login_id 
         LEFT JOIN likes ON board.board_id = likes.board_id
-        WHERE board.user_id = ?
+        WHERE board.user_login_id = ?
         GROUP BY board.board_id
         ORDER BY board_id DESC LIMIT ?, ?`;
-        const [rows2] = await db.query(sql2, [Number(req.params.user_id), skipSize, contentSize]);
+        const [rows2] = await db.query(sql2, [req.params.user_login_id, skipSize, contentSize]);
         if (rows2.length === 0) {
             console.log(`게시글 목록 조회 실패`);
             return false;
