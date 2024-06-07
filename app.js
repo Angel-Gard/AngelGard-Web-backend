@@ -46,7 +46,6 @@ app.options('*', (req, res) => {
 
 // 라우터 사용
 app.use("/", indexRouter);
-app.use("/user", userRouter);
 app.use("/test", testRouter);
 app.use("/board", boardRouter);
 app.use("/comment", commentRouter);
