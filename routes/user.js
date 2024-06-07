@@ -6,8 +6,8 @@ const router = express.Router();
 
 router.post('/signUp', userController.CsignUp);
 router.post('/login', userController.Clogin);
-router.get('/mypage/:id', authenticateJWT, userController.getUserDetails);
-router.post('/update/:id', authenticateJWT, userController.Cupdate);
+router.get('/myprofile/:user_login_id', authenticateJWT, userController.getUserDetails);
+router.post('/update/:user_login_id', authenticateJWT, userController.Cupdate);
 router.delete('/delete', authenticateJWT, userController.Cdelete);
 router.post('/logout', userController.Clogout);
 

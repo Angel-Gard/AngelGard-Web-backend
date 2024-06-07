@@ -10,7 +10,7 @@ const storage = multer.diskStorage({
         return cb(null, dir);
     },
     filename: function (req, file, cb) {
-        const userId = req.params.id; // URL에서 ID 추출
+        const userId = req.params.user_login_id; // URL에서 ID 추출
         const fileExtension = path.extname(file.originalname); // 원본 파일의 확장자 추출
         const filename = userId + fileExtension
         cb(null, filename); // 파일 이름을 ID로 설정하고 원본 확장자 추가
@@ -45,7 +45,7 @@ exports.uploadImage = [
             const newInfo = req.body;
 
             let filePath = '';
-            const userId = req.params.id;
+            const userId = req.params.user_login_id;
             if (req.file) {
                 filePath = "http://louk342.iptime.org:3000/image/profile/" +req.file.filename;
                 console.log("file Path : ",filePath);

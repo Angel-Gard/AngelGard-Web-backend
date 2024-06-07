@@ -9,13 +9,13 @@ const secretKey = process.env.SECRET_KEY || 'um1y6ywqx8jy370';
 // 회원가입
 exports.CsignUp = async (req, res) => {
     console.log(req.body);
-    const {id ,pw,username} = req.body;
-    console.log(id ,pw,username);
+    const {user_login_id ,pw,username} = req.body;
+    console.log(user_login_id ,pw,username);
     try {
-        if(!id || !pw || !username ){
+        if(!user_login_id || !pw || !username ){
             res.status(403).json({message:'정보를 모두 입력해주세요'});
         }else{
-            const bodyid = req.body.id;
+            const bodyid = req.body.user_login_id;
         const userre = await User.MgetUserDetails(bodyid);
         console.log(userre);
         const userId = userre[0];
@@ -38,9 +38,9 @@ exports.CsignUp = async (req, res) => {
 // 로그인
 exports.Clogin = async (req, res) => {
     console.log(req.body);
-    const {id,pw} = req.body;
+    const {user_login_id,pw} = req.body;
     try {
-        if(!id||!pw){
+        if(!user_login_id||!pw){
             res.status(403).json({message:'정보를 모두 입력해주세요'});
         }else{
             const result = await User.Mlogin(req.body);
@@ -52,9 +52,9 @@ exports.Clogin = async (req, res) => {
             const match = await bcrypt.compare(req.body.pw, user.user_pw);
             //console.log('Password match:', match);
             if (match) {
-                const token = jwt.sign({ id: user.id, username: user.username }, secretKey, { expiresIn: '1h' });
+                const token = jwt.sign({ user_login_id: user.user_login_id, username: user.username }, secretKey, { expiresIn: '1h' });
                 res.cookie(user.user_id, token, { httpOnly: true, secure: true });
-                res.json({ result: true, message: '로그인 성공', token: token, data: { user_nickname: user.user_nickname, user_id: user.user_login_id } });
+                res.json({ result: true, message: '로그인 성공', token: token, data: { user_nickname: user.user_nickname, user_login_id: user.user_login_id } });
             } else {
                 res.status(406).json({ result: false, message: '비밀번호가 일치하지 않습니다.' });
             }
@@ -84,14 +84,14 @@ exports.Clogout = (req, res) => {
 // 유저 정보 조회
 exports.getUserDetails = async (req, res) => {
     try {
-        const userId = req.params.id; // URL에서 id 값 가져오기
+        const userId = req.params.user_login_id; // URL에서 id 값 가져오기
         if (!userId) {
             return res.status(400).json({ result: false, message: '유효한 사용자 ID가 필요합니다.' });
         }else{
             const result = await User.MgetUserDetails(userId);
             if (result.length > 0) {
                 const user = result[0];
-                res.json({ result: true, data: { id: user.user_login_id, pw: user.user_pw, nickname: user.user_nickname } });
+                res.json({ result: true, data: { user_login_id: user.user_login_id, pw: user.user_pw, nickname: user.user_nickname } });
             } else {
                 res.json({ result: false, message: '사용자를 찾을 수 없습니다.' });
             }
@@ -106,14 +106,14 @@ exports.getUserDetails = async (req, res) => {
 // 회원정보 수정
 exports.Cupdate = async (req, res) => {
     try {
-        const {id ,pw,username} = req.body;
-        const userId = req.params.id;
-        if(!id || !pw || !username ){
+        const {user_login_id ,pw,username} = req.body;
+        const userId = req.params.user_login_id;
+        if(!user_login_id || !pw || !username ){
             res.status(403).json({message:'정보를 모두 입력해주세요'});
         }else{
-            console.log('User:', req.user.id,req.user.pw,req.user.username, userId);
-        let updateData = { ...req.body ,user_id: userId};
-        console.log('Update Data before password handling:', updateData);
+            console.log('User:', req.user.user_login_id,req.user.pw,req.user.username, userId);
+            let updateData = { ...req.body ,id: userId};
+            console.log('Update Data before password handling:', updateData);
         if (req.body.pw) {
             const hashedPassword = await bcrypt.hash(req.body.pw, 10); // 비밀번호 해싱
             updateData.pw = hashedPassword;
