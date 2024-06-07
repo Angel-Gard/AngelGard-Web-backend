@@ -4,16 +4,16 @@ module.exports = {
     createBaby: async function (req, res, next) {
         try {
             const result = await babys.createBaby(req);
-            const { user_id, baby_id } = result;
-            res.status(200).json({ user_id: user_id, baby_id: baby_id });
+            const {  user_login_id, baby_id } = result;
+            res.status(200).json({  user_login_id:  user_login_id, baby_id: baby_id });
         } catch (err) {
             next(err);
         }
     },
     getBabyById: async function (req, res, next) {
         try {
-            const { user_id, baby_id } = req.params;
-            const baby = await babys.getBabyById(user_id, baby_id);
+            const {  user_login_id, baby_id } = req.params;
+            const baby = await babys.getBabyById( user_login_id, baby_id);
             if (baby) {
                 res.status(200).json({ baby: baby });
             } else {
@@ -25,8 +25,8 @@ module.exports = {
     },
     getAllBabiesByUserId: async function (req, res, next) {
         try {
-            const { user_id } = req.params;
-            const babies = await babys.getAllBabiesByUserId(user_id);
+            const {  user_login_id } = req.params;
+            const babies = await babys.getAllBabiesByUserId( user_login_id);
             if (babies.length > 0) {
                 res.status(200).json({ babies: babies });
             } else {
@@ -39,8 +39,8 @@ module.exports = {
     
     updateBaby: async function (req, res, next) {
         try {
-            const { user_id, baby_id } = req.params;
-            const baby = await babys.getBabyById(user_id, baby_id);
+            const {  user_login_id, baby_id } = req.params;
+            const baby = await babys.getBabyById( user_login_id, baby_id);
             if (!baby) {
                 res.status(404).json({message: "아기를 찾을 수 없습니다."});
                 return;
@@ -52,10 +52,10 @@ module.exports = {
     },
     updateBabyProcess: async function (req, res, next) {
         try {
-            const { user_id, baby_id } = req.params;
+            const {  user_login_id, baby_id } = req.params;
             const updateData = req.body;
-            await babys.updateBaby(user_id, baby_id, updateData);
-            const updatedBaby = await babys.getBabyById(user_id, baby_id);
+            await babys.updateBaby( user_login_id, baby_id, updateData);
+            const updatedBaby = await babys.getBabyById( user_login_id, baby_id);
             res.status(200).json( { baby: updatedBaby,message: " 수정이완료되었습니다." });
         } catch (err) {
             next(err);
@@ -63,13 +63,13 @@ module.exports = {
     },
     deleteBaby: async function (req, res, next) {
         try {
-            const { user_id, baby_id } = req.params;
-            const baby = await babys.getBabyById(user_id, baby_id);
+            const {  user_login_id, baby_id } = req.params;
+            const baby = await babys.getBabyById( user_login_id, baby_id);
             if (!baby) {
                 res.status(404).json({ message: "아기를 찾을 수 없습니다." });
                 return;
             }
-            await babys.deleteBaby(user_id, baby_id);
+            await babys.deleteBaby( user_login_id, baby_id);
             res.status(200).json({ message: "아기 정보가 삭제되었습니다." });
         } catch (err) {
             next(err);

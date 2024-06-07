@@ -101,8 +101,8 @@ router.get("/babycreate", function (req, res, next) {
     var html = `
         <html>
             <form action="mypage/babycreate" method="post">
-            <label for="user_id">User ID:</label>
-            <input type="text" id="user_id" name="user_id"><br><br>
+            <label for=" user_login_id">User ID:</label>
+            <input type="text" id=" user_login_id" name=" user_login_id"><br><br>
             
                 <label for="baby_name">아이 이름:</label>
                 <input type="text" id="baby_name" name="baby_name"><br><br>
@@ -128,10 +128,10 @@ router.get("/babycreate", function (req, res, next) {
     res.send(html);
 });
 
-router.get("/babyupdate/:user_id/:baby_id", function (req, res, next) {
+router.get("/babyupdate/: user_login_id/:baby_id", function (req, res, next) {
   var html = `
       <html>
-          <form action="/mypage/babyupdate/${req.params.user_id}/${req.params.baby_id}" method="post">
+          <form action="/mypage/babyupdate/${req.params. user_login_id}/${req.params.baby_id}" method="post">
               <label for="baby_name">아이 이름:</label>
               <input type="text" id="baby_name" name="baby_name"><br><br>
               <label for="baby_birth">생년월일:</label>
@@ -151,10 +151,10 @@ router.get("/babyupdate/:user_id/:baby_id", function (req, res, next) {
   res.send(html);
 });
 
-router.get("/babydelete/:user_id/:baby_id", function (req, res, next) {
+router.get("/babydelete/: user_login_id/:baby_id", function (req, res, next) {
     var html = `
         <html>
-            <form action="/mypage/babydelete/${req.params.user_id}/${req.params.baby_id}" method="post">
+            <form action="/mypage/babydelete/${req.params. user_login_id}/${req.params.baby_id}" method="post">
                 <input type="submit" value="삭제">
             </form>
         </html>`;
