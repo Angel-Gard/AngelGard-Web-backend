@@ -49,15 +49,30 @@ exports.getUniqueUser = async (id) => {
 
 //수정
 exports.Mupdate = async (data) => {
-    let query;
+    let query = 'UPDATE user SET ';
+    let fields = [];
+    let values = [];
 
-    query = `UPDATE user SET user_pw = ?, user_nickname = ?,user_login_id = ? WHERE user_login_id = ?`;
+    if (data.pw) {
+        fields.push('user_pw = ?');
+        values.push(data.pw);
+    }
+    if (data.username) {
+        fields.push('user_nickname = ?');
+        values.push(data.username);
+    }
 
-    console.log('Executing update query:', query); // 로그 추가
+    if (fields.length === 0) {
+        throw new Error('No fields to update');
+    }
+
+    query += fields.join(', ') + ' WHERE user_login_id = ?';
+    values.push(data.id);
+
+    console.log('Executing update query:', query);
     try {
-        console.log(data.pw, data.username, data.user_login_id,data.id)
-        const [result] = await pool.query(query, [data.pw, data.username, data.user_login_id,data.id]);
-        console.log('Database Update Result:', result); // 로그 추가
+        const [result] = await pool.query(query, values);
+        console.log('Database Update Result:', result);
         return result;
     } catch (error) {
         console.error('Database Update Error:', error);

@@ -108,12 +108,13 @@ exports.Cupdate = async (req, res) => {
     try {
         const {user_login_id ,pw,username} = req.body;
         const userId = req.params.user_login_id;
-        if(!user_login_id || !pw || !username ){
-            res.status(403).json({message:'정보를 모두 입력해주세요'});
+
+        if(!pw && !username){
+            res.status(403).json({message:'정보를 둘중한개라도 입력해주세요'});
         }else{
             console.log('User:', req.user.user_login_id,req.user.pw,req.user.username, userId);
-            let updateData = { ...req.body ,id: userId};
-            console.log('Update Data before password handling:', updateData);
+        let updateData = { ...req.body ,id: userId};
+        console.log('Update Data before password handling:', updateData);
         if (req.body.pw) {
             const hashedPassword = await bcrypt.hash(req.body.pw, 10); // 비밀번호 해싱
             updateData.pw = hashedPassword;
@@ -124,6 +125,7 @@ exports.Cupdate = async (req, res) => {
         console.log('Update Result:', result);
 
         res.json({ result: true, message: '회원정보가 성공적으로 수정되었습니다.' });
+        
         }
         
     } catch (error) {
