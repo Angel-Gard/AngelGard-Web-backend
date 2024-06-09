@@ -91,7 +91,7 @@ exports.getUserDetails = async (req, res) => {
             const result = await User.MgetUserDetails(userId);
             if (result.length > 0) {
                 const user = result[0];
-                res.json({ result: true, data: { user_login_id: user.user_login_id, pw: user.user_pw, nickname: user.user_nickname } });
+                res.json({ result: true, data: { user_login_id: user.user_login_id, pw: user.user_pw, user_nickname: user.user_nickname } });
             } else {
                 res.json({ result: false, message: '사용자를 찾을 수 없습니다.' });
             }
