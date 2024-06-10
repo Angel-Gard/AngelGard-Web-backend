@@ -6,7 +6,8 @@ const qimage = require('../models/qimage'); // 쿼리 모델
 // Multer 설정 아이디를 가지고 파일이름을 아이디로 하기
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const dir = path.join(__dirname, '../image/proflie');
+        const dir = path.join(__dirname, '../image/profile');
+
         return cb(null, dir);
     },
     filename: function (req, file, cb) {
@@ -36,12 +37,14 @@ const upload = multer({
 });
 
 exports.uploadImage = [
-    upload.single('imageFile'),
+    //upload.single('imageFile'),
+    upload.any(),
     async (req, res) => {
-        if (!req.file) {
+        if (!req.files) {
             return res.status(407).json({ message: '이미지 파일만 업로드 가능합니다.' });
         }else{
-            console.log("req : ",req.file);
+            const file = req.files[0];
+            console.log("req : ",file);
             const newInfo = req.body;
 
             let filePath = '';
@@ -61,7 +64,7 @@ exports.uploadImage = [
 ];
 
 exports.getImageById = async (req, res) => {
-    const paramsid = req.params.id;
+    const paramsid = req.params.user_login_id;
     console.log("paramsid : ",paramsid)
     // DB에서 이미지 정보 조회
     const result = await qimage.getimage(paramsid);
