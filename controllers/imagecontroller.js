@@ -51,12 +51,14 @@ exports.uploadImage = [
 
             let filePath = '';
             const userId = req.params.user_login_id;
-            if (req.file) {
-                filePath = "http://louk342.iptime.org:3000/image/profile/" +req.file.filename;
+            if (file) {
+                filePath = "http://louk342.iptime.org:3000/image/profile/" +file.filename;
                 console.log("file Path : ",filePath);
                 newInfo["imageFile"] = filePath;
             }
             // 여기에 데이터베이스 저장 로직 추가 가능
+            console.log("filepath : ",filePath);
+            console.log("userid : ", userId);
             const result = await qimage.imageup({filePath,userId});
             res.status(200).json({result});
         }
