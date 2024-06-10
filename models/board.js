@@ -42,6 +42,7 @@ module.exports = {
         });
 
         const result = {
+            totalCount,
             pageNum,
             pnStart,
             pnEnd,
@@ -223,6 +224,7 @@ module.exports = {
         });
 
         const result = {
+            totalCount,
             pageNum,
             pnStart,
             pnEnd,
@@ -273,6 +275,7 @@ module.exports = {
         });
 
         const result = {
+            totalCount,
             pageNum,
             pnStart,
             pnEnd,
