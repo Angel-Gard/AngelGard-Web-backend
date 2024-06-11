@@ -44,16 +44,11 @@ exports.Clogin = async (req, res) => {
             res.status(403).json({message:'정보를 모두 입력해주세요'});
         }else{
             const result = await User.Mlogin(req.body);
-        //console.log('login', result);
         if (result.length >= 1) {
             const user = result[0];
-            //console.log('Stored hash:', user.user_pw);
-            //console.log('Entered password:', req.body.pw);
             const match = await bcrypt.compare(req.body.pw, user.user_pw);
-            //console.log('Password match:', match);
             if (match) {
                 const token = jwt.sign({ user_login_id: user.user_login_id, username: user.username }, secretKey, { expiresIn: '1h' });
-                res.cookie(user.user_id, token, { httpOnly: true, secure: true });
                 res.json({ result: true, message: '로그인 성공', token: token, data: { user_nickname: user.user_nickname, user_login_id: user.user_login_id } });
             } else {
                 res.status(406).json({ result: false, message: '비밀번호가 일치하지 않습니다.' });
