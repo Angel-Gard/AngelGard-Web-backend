@@ -83,7 +83,7 @@ module.exports = {
     },
     // 게시글 생성
     createBoard: async function (req, res, next) {
-        let filePath = "null"; // 이미지 경로 -- default 'null'
+        let filePath;
         upload.single("board_thumbnail")(req, res, async (err) => {
             try {
                 if (req.file) {
@@ -92,10 +92,16 @@ module.exports = {
                 }
 
                 // ********************null 공백 체크************************
+                // user_login_id가 없으면
+                if (!req.body.user_login_id) {
+                    console.log("createBoard: user_login_id is null");
+
+                    return res.status(400).json({ message: "user_login_id를 확인해주세요", success: false });
+                }
                 // board_title이 ""이거나 null일때
                 if (req.body.board_title === "" || !req.body.board_title) {
-                    console.log("no board_title");
-                    if (filePath !== "null") {
+                    console.log("createBoard : no board_title");
+                    if (!filePath) {
                         // 파일 경로에서 파일명 추출
                         let filename = path.basename(filePath);
                         // 이미지 삭제 함수 호출
@@ -105,9 +111,9 @@ module.exports = {
                 }
                 // board_content가 ""이거나 null일때
                 if (req.body.board_content === "" || !req.body.board_content) {
-                    console.log("no board_content");
+                    console.log("createBoard : no board_content");
 
-                    if (filePath !== "null") {
+                    if (!filePath) {
                         // 파일 경로에서 파일명 추출
                         let filename = path.basename(filePath);
                         // 이미지 삭제 함수 호출

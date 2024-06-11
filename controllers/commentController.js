@@ -23,6 +23,21 @@ module.exports = {
             // comment_content가 없으면
             return res.status(400).json({ message: "댓글 내용을 입력해주세요.", success: false });
         }
+
+        // user_login_id가 없으면
+        if (!req.body.user_login_id) {
+            console.log("createComment: user_login_id is null");
+
+            return res.status(400).json({ message: "user_login_id를 확인해주세요", success: false });
+        }
+
+        // board_id가 없으면
+        if (!req.body.board_id) {
+            console.log("createComment: board_id is null");
+
+            return res.status(400).json({ message: "board_id를 확인해주세요", success: false });
+        }
+
         await comments
             .createComment(req)
             .then((result) => {

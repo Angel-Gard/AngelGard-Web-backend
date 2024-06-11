@@ -90,7 +90,7 @@ module.exports = {
         return rows[0];
     },
     updateBoardProcess: async function (req, filePath) {
-        if (filePath !== "null") {
+        if (!filePath) {
             // 이미지 변경이 있을 경우
             const sql = `UPDATE board SET board_title=?, board_content=?, board_thumbnail=? WHERE board_id = ?`;
             const [rows] = await db.query(sql, [req.body.board_title, req.body.board_content, filePath, Number(req.params.board_id)]);
