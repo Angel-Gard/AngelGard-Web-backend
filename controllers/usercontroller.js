@@ -4,7 +4,8 @@ const User = require('../models/quser'); // 쿼리 모델
 const { param } = require('../routes');
 const secretKey = process.env.SECRET_KEY || 'um1y6ywqx8jy370';
 
-
+const redis = require('redis');
+const client = redis.createClient();
 
 // 회원가입
 exports.CsignUp = async (req, res) => {
@@ -67,7 +68,8 @@ exports.Clogin = async (req, res) => {
 //로그아웃
 exports.Clogout = (req, res) => {
     try {
-        res.clearCookie('token'); // 쿠키에서 JWT 토큰을 삭제
+        const token = req.token;
+        client.set(token, 'invalid', 'EX', 3600); // 토큰을 블랙리스트에 추가 (1시간 후 만료)
         res.json({ result: true, message: '로그아웃 성공' });
     } catch (error) {
         console.error('로그아웃 중 에러 발생:', error);
