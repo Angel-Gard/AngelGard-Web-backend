@@ -11,20 +11,28 @@ const storage = multer.diskStorage({
         return cb(null, dir);
     },
     filename: function (req, file, cb) {
-        const filename = `${Date.now()}-${file.originalname}`;
-        cb(null, filename); // 파일 이름을 ID로 설정하고 원본 확장자 추가
+        if (file) {
+            const filename = `${Date.now()}-${file.originalname}`;
+            cb(null, filename); // 파일 이름을 ID로 설정하고 원본 확장자 추가
+        } else {
+            cb(null, null);
+        }
     },
 });
 
 // 파일 유형 확인 (이미지 파일만 허용)
 const fileFilter = (req, file, cb) => {
-    // 허용할 이미지 파일의 MIME 타입
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
-
-    if (allowedTypes.includes(file.mimetype)) {
-        cb(null, true); // 파일 허용
+    if (!file) {
+        cb(null, true);
     } else {
-        cb(new Error("이미지 파일만 업로드 가능합니다."), false); // 파일 거부
+        // 허용할 이미지 파일의 MIME 타입
+        const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+
+        if (allowedTypes.includes(file.mimetype)) {
+            cb(null, true); // 파일 허용
+        } else {
+            cb(new Error("이미지 파일만 업로드 가능합니다."), false); // 파일 거부
+        }
     }
 };
 
@@ -83,7 +91,7 @@ module.exports = {
     },
     // 게시글 생성
     createBoard: async function (req, res, next) {
-        let filePath;
+        let filePath = null;
         upload.single("board_thumbnail")(req, res, async (err) => {
             try {
                 if (req.file) {
@@ -93,7 +101,7 @@ module.exports = {
 
                 // ********************null 공백 체크************************
                 // user_login_id가 없으면
-                if (!req.body.user_login_id) {
+                if (req.body.user_login_id === "null" || !req.body.user_login_id) {
                     console.log("createBoard: user_login_id is null");
 
                     return res.status(400).json({ message: "user_login_id를 확인해주세요", success: false });
@@ -101,7 +109,8 @@ module.exports = {
                 // board_title이 ""이거나 null일때
                 if (req.body.board_title === "" || !req.body.board_title) {
                     console.log("createBoard : no board_title");
-                    if (!filePath) {
+                    console.log(filePath);
+                    if (filePath) {
                         // 파일 경로에서 파일명 추출
                         let filename = path.basename(filePath);
                         // 이미지 삭제 함수 호출
@@ -113,7 +122,7 @@ module.exports = {
                 if (req.body.board_content === "" || !req.body.board_content) {
                     console.log("createBoard : no board_content");
 
-                    if (!filePath) {
+                    if (filePath) {
                         // 파일 경로에서 파일명 추출
                         let filename = path.basename(filePath);
                         // 이미지 삭제 함수 호출
