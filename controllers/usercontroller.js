@@ -80,12 +80,7 @@ exports.Clogin = async (req, res) => {
 // 로그아웃
 exports.Clogout = (req, res) => {
     try {
-        const authHeader = req.headers["authorization"];
-        if (!authHeader) {
-            return res.status(401).json({ result: false, message: '인증 헤더가 없습니다.' });
-        }
-
-        const token = authHeader.split(" ")[1];
+        const token = req.token;
         const blacklist = readBlacklist();
         blacklist[token] = true;
         writeBlacklist(blacklist);
