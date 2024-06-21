@@ -1,6 +1,7 @@
 const createError = require("http-errors");
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
@@ -30,6 +31,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 // CORS 처리 -- 수정필요
+app.use(cors());
 app.use((req, res, next) => {
     const allowedOrigins = ["http://louk342.iptime.org:8080", "http://localhost:3000"];
     const origin = req.headers.origin;
