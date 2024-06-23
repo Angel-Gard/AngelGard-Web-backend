@@ -16,6 +16,9 @@ const babyRouter = require("./routes/babyrouter");
 const indexRouter = require("./routes/index");
 const userRouter = require("./routes/user");
 const imageRouter = require("./routes/image");
+const dthRouter = require('./routes/DTH');
+
+
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -55,6 +58,7 @@ app.use("/mypage", babyRouter);
 app.use("/", indexRouter);
 app.use("/user", userRouter);
 app.use("/image", imageRouter);
+app.use('/dth',dthRouter);
 
 // 이미지 반환
 app.use("/image/thumbnails", express.static("./image/thumbnails"));
