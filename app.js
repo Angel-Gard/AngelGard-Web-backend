@@ -1,6 +1,7 @@
 const createError = require("http-errors");
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
@@ -33,8 +34,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 // CORS 처리 -- 수정필요
+app.use(cors());
 app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "http://localhost:8080"); // locallhost:3000 허용
+    const allowedOrigins = ["http://louk342.iptime.org:8080", "http://localhost:3000"];
+    const origin = req.headers.origin;
+
+    if (allowedOrigins.includes(origin)) {
+        res.header("Access-Control-Allow-Origin", origin); // 요청 출처를 허용
+    }
     res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE, OPTIONS"); // 허용할 HTTP 메서드
     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization"); // 허용할 헤더
     res.header("Access-Control-Allow-Credentials", "true"); // 자격 증명 허용
