@@ -17,9 +17,7 @@ const babyRouter = require("./routes/babyrouter");
 const indexRouter = require("./routes/index");
 const userRouter = require("./routes/user");
 const imageRouter = require("./routes/image");
-const dthRouter = require('./routes/dthmb');
-
-
+const dthRouter = require("./routes/dthmb");
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -65,12 +63,12 @@ app.use("/mypage", babyRouter);
 app.use("/", indexRouter);
 app.use("/user", userRouter);
 app.use("/image", imageRouter);
-app.use('/dth',dthRouter);
+app.use("/dth", dthRouter);
 
 // 이미지 반환
-app.use("/image/thumbnails", express.static("./image/thumbnails"));
+app.use("/img/thumbnails", express.static("../resource/img/thumbnails"));
 
-app.use("/image", express.static("./image"));
+app.use("/img", express.static("../resource/img"));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

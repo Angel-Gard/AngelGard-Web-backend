@@ -7,7 +7,10 @@ const fs = require("fs");
 // Multer 설정 아이디를 가지고 파일이름을 아이디로 하기
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const dir = path.join(__dirname, "../image/thumbnails");
+        const dir = path.join(__dirname, "../../resource/img/thumbnails");
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
         return cb(null, dir);
     },
     filename: function (req, file, cb) {
@@ -47,7 +50,7 @@ const upload = multer({
 const deleteImage = function (filename) {
     console.log(filename);
     // 이미지 경로 설정
-    const imagePath = path.join(__dirname, "../image/thumbnails/", filename);
+    const imagePath = path.join(__dirname, "../../resource/img/thumbnails/", filename);
     // 파일 삭제
     fs.unlink(imagePath, (err) => {
         if (err) {
@@ -96,7 +99,7 @@ module.exports = {
             try {
                 if (req.file) {
                     // 이미지가 있을 경우
-                    filePath = "http://louk342.iptime.org:3000/image/thumbnails/" + req.file.filename;
+                    filePath = "http://louk342.iptime.org:3000/img/thumbnails/" + req.file.filename;
                 }
 
                 // ********************null 공백 체크************************
@@ -174,7 +177,7 @@ module.exports = {
             try {
                 if (req.file) {
                     // 이미지가 있을 경우
-                    filePath = "http://louk342.iptime.org:3000/image/thumbnails/" + req.file.filename;
+                    filePath = "http://louk342.iptime.org:3000/img/thumbnails/" + req.file.filename;
                 }
                 await boards
                     .selectImage(req)
