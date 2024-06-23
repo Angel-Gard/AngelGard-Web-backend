@@ -6,7 +6,7 @@ exports.getTempData = async (req,res) => {
         const userId = req.params.id;
         const uniqueUser = await User.getUniqueUser(userId);
         console.log( 'id : ' ,userId);
-        const response = await axios.get(`http://louk342.iptime.org:3010/data?uuid=${uniqueUser}`);
+        const response = await axios.get(`http://louk342.iptime.org:3010/data?uuid=${userId}`);
         //const response = await axios.get(`http://louk342.iptime.org:3010/data`);
         const data = response.data;
         res.json(data);
