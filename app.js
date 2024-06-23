@@ -17,7 +17,7 @@ const babyRouter = require("./routes/babyrouter");
 const indexRouter = require("./routes/index");
 const userRouter = require("./routes/user");
 const imageRouter = require("./routes/image");
-const dthRouter = require('./routes/DTH');
+const dthRouter = require('./routes/dthmb');
 
 
 
