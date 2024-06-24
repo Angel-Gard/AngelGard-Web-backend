@@ -85,7 +85,7 @@ module.exports = {
                 if (result) {
                     res.status(200).json(result);
                 } else {
-                    res.status(404).json({ board_title: "게시글을 찾을 수 없습니다.", message: "게시글을 찾을 수 없습니다.", success: false });
+                    res.status(200).json({ board_title: "게시글을 찾을 수 없습니다.", message: "게시글을 찾을 수 없습니다.", success: false });
                 }
             })
             .catch((err) => {
