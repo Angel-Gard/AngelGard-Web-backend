@@ -13,13 +13,15 @@ const boardRouter = require("./routes/boardRouter");
 const commentRouter = require("./routes/commentRouter");
 const likeRouter = require("./routes/likeRouter");
 const babyRouter = require("./routes/babyrouter");
+const schedulerRouter = require('./routes/schedulerRouter');
+const babyboardRouter = require('./routes/babyboardRouter');
 
 const indexRouter = require("./routes/index");
 const userRouter = require("./routes/user");
 const imageRouter = require("./routes/image");
 const dthRouter = require("./routes/dthmb");
-
 const eatRouter = require("./routes/eating");
+
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -67,6 +69,9 @@ app.use("/user", userRouter);
 app.use("/image", imageRouter);
 app.use("/dth", dthRouter);
 app.use("/eat",eatRouter);
+
+app.use('/scheduler', schedulerRouter); 
+app.use('/babyboard', babyboardRouter);
 
 // 이미지 반환
 app.use("/img/thumbnails", express.static("../resource/img/thumbnails"));
