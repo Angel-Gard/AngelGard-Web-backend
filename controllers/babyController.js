@@ -1,6 +1,8 @@
 const babys = require("../models/baby");
 
 module.exports = {
+
+    // 애기정보 등록
     createBaby: async function (req, res, next) {
         try {
             const result = await babys.createBaby(req);
@@ -10,6 +12,8 @@ module.exports = {
             next(err);
         }
     },
+    
+    //개인 애기정보 조회
     getBabyById: async function (req, res, next) {
         try {
             const { user_login_id, baby_id } = req.params;
@@ -23,6 +27,9 @@ module.exports = {
             next(err);
         }
     },
+
+
+    //모든 애기정보 조회
     getAllBabiesByUserId: async function (req, res, next) {
         try {
             const { user_login_id } = req.params;
@@ -36,6 +43,8 @@ module.exports = {
             next(err);
         }
     },
+
+    //애기정보 수정(조회)
     updateBaby: async function (req, res, next) {
         try {
             const { user_login_id, baby_id } = req.params;
@@ -49,6 +58,8 @@ module.exports = {
             next(err);
         }
     },
+
+    //애기정보 수정
     updateBabyProcess: async function (req, res, next) {
         try {
             const { user_login_id, baby_id } = req.params;
@@ -60,6 +71,10 @@ module.exports = {
             next(err);
         }
     },
+
+
+
+    //애기정보 삭제 
     deleteBaby: async function (req, res, next) {
         try {
             const { user_login_id, baby_id } = req.params;
