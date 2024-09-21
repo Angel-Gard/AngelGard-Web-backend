@@ -28,8 +28,7 @@ const ydateString = yyear + '-' + ymonth  + '-' + yday;
 
 // 섭취량 입력
 exports.Babyeating = async (req,res) => {
-    const today_date = new Date();
-    console.log(today_date);
+    console.log(today);
     console.log(req.body);
     const {feed_amount,baby_name} = req.body;
     console.log(feed_amount,baby_name);
@@ -40,7 +39,7 @@ exports.Babyeating = async (req,res) => {
     if(!bName < 0){
         res.status(400).json({result:false,message:'아이 이름 오류'});
     }else{
-        const babyeat = {...req.body,today:today_date,baby_id:bName};
+        const babyeat = {...req.body,today:today,baby_id:bName};
         console.log(babyeat);
 
         if(!feed_amount){
@@ -61,9 +60,7 @@ exports.Babyeating = async (req,res) => {
 
 // 유축량 입력
 exports.Pumping = async (req,res) => {
-    const today_date = new Date();
-    console.log(today_date);
-    console.log(req.body);
+    console.log(today);
     const {intake_amount,baby_name} = req.body;
     console.log(intake_amount,baby_name);
 
@@ -73,7 +70,7 @@ exports.Pumping = async (req,res) => {
     if(!baby_id){
         res.status(400).json({result:false,message:'아이 이름을 찾을 수 없습니다.'});
     }else{
-        const intake = {...req.body,today:today_date,baby_id:baby_id};
+        const intake = {...req.body,today:today,baby_id:baby_id};
         console.log(intake);
 
         if(!intake_amount){
@@ -95,7 +92,6 @@ exports.Pumping = async (req,res) => {
 
 //모유수유 시간 입력
 exports.InsertMS = async (req,res) => {
-    const today_date = new Date();
 
     const { m_time,baby_name } = req.body;
 
@@ -105,7 +101,7 @@ exports.InsertMS = async (req,res) => {
         res.status(400).json({result:false,message:'아이 이름을 찾을 수 없습니다.'});
     }else{
 
-        const ms_time =  {...req.body,today:today_date,baby_id:baby_id};
+        const ms_time =  {...req.body,today:today,baby_id:baby_id};
         console.log(ms_time);
 
         if(!m_time){
@@ -151,8 +147,12 @@ exports.SelectEat = async (req,res) => {
             return accumulator + current.feed_amount;
         }, 0);
 
-        if(!group_eat){//실패
-            res.status(200).json({message:"조회된 결과가 없습니다."});
+        if(!group_eat ||y_group_eat ){//실패
+            if(!group_eat){
+                res.status(401).json({result:false,message:"오늘 기록이 없습니다."})
+            }else{
+                res.status(401).json({result:false,message:"전날 기록이 없습니다."})
+            }
         }else{
             res.status(500).json({"오늘 수유량":total_group_eat,"전날 수유량":total_ygroup_eat});
         }
@@ -188,7 +188,12 @@ exports.Selectpum = async (req,res) => {
             return accumulator + current.intake_amount;
         }, 0);
 
-        if(!group_pum){//실패
+        if(!group_pum || y_group_pum){//실패
+            if(!group_pum){
+                res.status(401).json({result:false,message:"오늘 기록이 없습니다."})
+            }else{
+                res.status(401).json({result:false,message:"전날 기록이 없습니다."})
+            }
 
         }else{
             res.status(500).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
@@ -221,8 +226,12 @@ exports.SelectMS = async (req,res) => {
         const total_ygroup_time = y_group_time.reduce((accumulator, current) => {
             return accumulator + current.m_time;
         }, 0);
-        if(!group_time){//실패
-
+        if(!group_time || !y_group_time){//실패
+            if(!group_time){
+                res.status(401).json({result:false,message:"오늘 기록이 없습니다."})
+            }else{
+                res.status(401).json({result:false,message:"전날 기록이 없습니다."})
+            }
         }else{
             res.status(500).json({"오늘 총시간":total_group_time,"전날 총시간":total_ygroup_time});
         }
