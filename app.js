@@ -19,6 +19,8 @@ const userRouter = require("./routes/user");
 const imageRouter = require("./routes/image");
 const dthRouter = require("./routes/dthmb");
 
+const eatRouter = require("./routes/eating");
+
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
@@ -64,6 +66,8 @@ app.use("/", indexRouter);
 app.use("/user", userRouter);
 app.use("/image", imageRouter);
 app.use("/dth", dthRouter);
+
+app.use("/eat",eatRouter);
 
 // 이미지 반환
 app.use("/img/thumbnails", express.static("../resource/img/thumbnails"));
