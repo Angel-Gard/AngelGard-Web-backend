@@ -66,7 +66,6 @@ app.use("/", indexRouter);
 app.use("/user", userRouter);
 app.use("/image", imageRouter);
 app.use("/dth", dthRouter);
-
 app.use("/eat",eatRouter);
 
 // 이미지 반환

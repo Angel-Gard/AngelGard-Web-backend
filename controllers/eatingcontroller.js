@@ -1,5 +1,5 @@
 const EatM = require('../models/eatingmodel'); // 쿼리 모델
-const BabyM = require('../models/babymodel');
+const BabyM = require('../models/quser');
 
 
 //const userre = await User.MgetUserDetails(bodyid);
