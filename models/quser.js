@@ -6,7 +6,6 @@ exports.MsignUp = async (data) => {
     const query = `INSERT INTO user (user_login_id, user_pw, user_nickname) VALUES (?, ?, ?)`;
     try {
         const [result] = await pool.query(query, [data.user_login_id, data.pw, data.username]);
-        console.log('Database Insert Result:', result);
         return result;
     } catch (error) {
         console.error('Database Insert Error:', error);
@@ -25,7 +24,6 @@ exports.Mlogin = async (data) => {
 exports.MgetUserDetails = async (id) => {
     const query = `SELECT user_login_id, user_pw, user_nickname FROM user WHERE user_login_id = ?`;
     try {
-        console.log('Executing query:', query, 'with ID:', id); // 로그 추가
         const [rows] = await pool.query(query, [id]);
         return rows;
     } catch (error) {
@@ -38,7 +36,6 @@ exports.MgetUserDetails = async (id) => {
 exports.getUniqueUser = async (id) => {
     const query = `SELECT user_id FROM user WHERE user_login_id =?`;
     try{
-
         const [rows] = await pool.query(query,[id]);
         return rows;
     }catch(err){
@@ -69,7 +66,6 @@ exports.Mupdate = async (data) => {
     query += fields.join(', ') + ' WHERE user_login_id = ?';
     values.push(data.id);
 
-    console.log('Executing update query:', query);
     try {
         const [result] = await pool.query(query, values);
         console.log('Database Update Result:', result);
@@ -86,4 +82,11 @@ exports.Mdelete = async (data) => {
     const [result] = await pool.query(query, [data.id]);
     return result;
 };
+
+
+exports.Selectbabyid = async (data) => { // baby_id 찾기
+    const query = `SELECT baby_id from baby where baby_name = ?`;
+    const [result] = await pool.query(query,data);
+    return result[0].baby_id;
+}
 

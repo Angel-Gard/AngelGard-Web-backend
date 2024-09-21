@@ -1,9 +1,25 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('../models/quser'); // 쿼리 모델
-const { param } = require('../routes');
+const fs = require('fs');
+const path = require('path');
+const User = require('../models/quser'); 
 const secretKey = process.env.SECRET_KEY || 'um1y6ywqx8jy370';
 
+const blacklistPath = path.join(__dirname, '../blacklist.json');
+
+// 블랙리스트 파일을 읽어옴
+const readBlacklist = () => {
+    if (fs.existsSync(blacklistPath)) {
+        const data = fs.readFileSync(blacklistPath, 'utf8');
+        return JSON.parse(data);
+    }
+    return {};
+};
+
+// 블랙리스트 파일에 저장
+const writeBlacklist = (blacklist) => {
+    fs.writeFileSync(blacklistPath, JSON.stringify(blacklist, null, 2));
+};
 
 
 // 회원가입
@@ -16,10 +32,10 @@ exports.CsignUp = async (req, res) => {
             res.status(403).json({message:'정보를 모두 입력해주세요'});
         }else{
             const bodyid = req.body.user_login_id;
-        const userre = await User.MgetUserDetails(bodyid);
-        console.log(userre);
-        const userId = userre[0];
-        console.log('bodyuserid : ',bodyid)
+            const userre = await User.MgetUserDetails(bodyid);
+            console.log(userre);
+            const userId = userre[0];
+            console.log('bodyuserid : ',bodyid)
         if(userre.length >= 1){
             res.status(402).json({ result: false, message: '아이디 중복'});
         }else{
@@ -37,45 +53,40 @@ exports.CsignUp = async (req, res) => {
 
 // 로그인
 exports.Clogin = async (req, res) => {
-    console.log(req.body);
-    const {user_login_id,pw} = req.body;
+    const { user_login_id, pw } = req.body;
     try {
-        if(!user_login_id||!pw){
-            res.status(403).json({message:'정보를 모두 입력해주세요'});
-        }else{
-            const result = await User.Mlogin(req.body);
-        //console.log('login', result);
-        if (result.length >= 1) {
-            const user = result[0];
-            //console.log('Stored hash:', user.user_pw);
-            //console.log('Entered password:', req.body.pw);
-            const match = await bcrypt.compare(req.body.pw, user.user_pw);
-            //console.log('Password match:', match);
-            if (match) {
-                const token = jwt.sign({ user_login_id: user.user_login_id, username: user.username }, secretKey, { expiresIn: '1h' });
-                res.cookie(user.user_id, token, { httpOnly: true, secure: true });
-                res.json({ result: true, message: '로그인 성공', token: token, data: { user_nickname: user.user_nickname, user_login_id: user.user_login_id } });
-            } else {
-                res.status(406).json({ result: false, message: '비밀번호가 일치하지 않습니다.' });
-            }
+        if (!user_login_id || !pw) {
+            res.status(403).json({ message: '정보를 모두 입력해주세요' });
         } else {
-            res.status(405).json({ result: false, message: '사용자를 찾을 수 없습니다.' });
+            const result = await User.Mlogin(req.body);
+            if (result.length >= 1) {
+                const user = result[0];
+                const match = await bcrypt.compare(req.body.pw, user.user_pw);
+                if (match) {
+                    const token = jwt.sign({ user_login_id: user.user_login_id, username: user.username }, secretKey, { expiresIn: '1h' });
+                    res.json({ result: true, message: '로그인 성공', token: token, data: { user_nickname: user.user_nickname, user_login_id: user.user_login_id } });
+                } else {
+                    res.status(406).json({ result: false, message: '비밀번호가 일치하지 않습니다.' });
+                }
+            } else {
+                res.status(405).json({ result: false, message: '사용자를 찾을 수 없습니다.' });
+            }
         }
-        }
-        
     } catch (error) {
-        console.error('로그인 중 에러 발생:', error);
         res.status(500).json({ result: false, message: '로그인 실패', error: error.message });
     }
 };
 
-//로그아웃
+// 로그아웃
 exports.Clogout = (req, res) => {
     try {
-        res.clearCookie('token'); // 쿠키에서 JWT 토큰을 삭제
+        const token = req.token;
+        const blacklist = readBlacklist();
+        blacklist[token] = true;
+        writeBlacklist(blacklist);
+        
         res.json({ result: true, message: '로그아웃 성공' });
     } catch (error) {
-        console.error('로그아웃 중 에러 발생:', error);
         res.status(500).json({ result: false, message: '로그아웃 실패', error: error.message });
     }
 };

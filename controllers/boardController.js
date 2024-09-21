@@ -7,24 +7,35 @@ const fs = require("fs");
 // Multer 설정 아이디를 가지고 파일이름을 아이디로 하기
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const dir = path.join(__dirname, "../image/thumbnails");
+        const dir = path.join(__dirname, "../../resource/img/thumbnails");
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
         return cb(null, dir);
     },
     filename: function (req, file, cb) {
-        const filename = `${Date.now()}-${file.originalname}`;
-        cb(null, filename); // 파일 이름을 ID로 설정하고 원본 확장자 추가
+        if (file) {
+            const filename = `${Date.now()}-${file.originalname}`;
+            cb(null, filename); // 파일 이름을 ID로 설정하고 원본 확장자 추가
+        } else {
+            cb(null, null);
+        }
     },
 });
 
 // 파일 유형 확인 (이미지 파일만 허용)
 const fileFilter = (req, file, cb) => {
-    // 허용할 이미지 파일의 MIME 타입
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
-
-    if (allowedTypes.includes(file.mimetype)) {
-        cb(null, true); // 파일 허용
+    if (!file) {
+        cb(null, true);
     } else {
-        cb(new Error("이미지 파일만 업로드 가능합니다."), false); // 파일 거부
+        // 허용할 이미지 파일의 MIME 타입
+        const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+
+        if (allowedTypes.includes(file.mimetype)) {
+            cb(null, true); // 파일 허용
+        } else {
+            cb(new Error("이미지 파일만 업로드 가능합니다."), false); // 파일 거부
+        }
     }
 };
 
@@ -39,7 +50,7 @@ const upload = multer({
 const deleteImage = function (filename) {
     console.log(filename);
     // 이미지 경로 설정
-    const imagePath = path.join(__dirname, "../image/thumbnails/", filename);
+    const imagePath = path.join(__dirname, "../../resource/img/thumbnails/", filename);
     // 파일 삭제
     fs.unlink(imagePath, (err) => {
         if (err) {
@@ -74,7 +85,7 @@ module.exports = {
                 if (result) {
                     res.status(200).json(result);
                 } else {
-                    res.status(404).json({ message: "게시글을 찾을 수 없습니다.", success: false });
+                    res.status(200).json({ board_title: "게시글을 찾을 수 없습니다.", message: "게시글을 찾을 수 없습니다.", success: false });
                 }
             })
             .catch((err) => {
@@ -83,19 +94,26 @@ module.exports = {
     },
     // 게시글 생성
     createBoard: async function (req, res, next) {
-        let filePath = "null"; // 이미지 경로 -- default 'null'
+        let filePath = null;
         upload.single("board_thumbnail")(req, res, async (err) => {
             try {
                 if (req.file) {
                     // 이미지가 있을 경우
-                    filePath = "http://louk342.iptime.org:3000/image/thumbnails/" + req.file.filename;
+                    filePath = "http://louk342.iptime.org:3000/img/thumbnails/" + req.file.filename;
                 }
 
                 // ********************null 공백 체크************************
+                // user_login_id가 없으면
+                if (req.body.user_login_id === "null" || !req.body.user_login_id) {
+                    console.log("createBoard: user_login_id is null");
+
+                    return res.status(400).json({ message: "user_login_id를 확인해주세요", success: false });
+                }
                 // board_title이 ""이거나 null일때
                 if (req.body.board_title === "" || !req.body.board_title) {
-                    console.log("no board_title");
-                    if (filePath !== "null") {
+                    console.log("createBoard : no board_title");
+                    console.log(filePath);
+                    if (filePath) {
                         // 파일 경로에서 파일명 추출
                         let filename = path.basename(filePath);
                         // 이미지 삭제 함수 호출
@@ -105,9 +123,9 @@ module.exports = {
                 }
                 // board_content가 ""이거나 null일때
                 if (req.body.board_content === "" || !req.body.board_content) {
-                    console.log("no board_content");
+                    console.log("createBoard : no board_content");
 
-                    if (filePath !== "null") {
+                    if (filePath) {
                         // 파일 경로에서 파일명 추출
                         let filename = path.basename(filePath);
                         // 이미지 삭제 함수 호출
@@ -159,7 +177,7 @@ module.exports = {
             try {
                 if (req.file) {
                     // 이미지가 있을 경우
-                    filePath = "http://louk342.iptime.org:3000/image/thumbnails/" + req.file.filename;
+                    filePath = "http://louk342.iptime.org:3000/img/thumbnails/" + req.file.filename;
                 }
                 await boards
                     .selectImage(req)
