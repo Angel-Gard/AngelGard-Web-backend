@@ -51,20 +51,21 @@ module.exports = {
     },
     
     
+// 스케줄러 항목 업데이트
+updateschedule: async function (data) {
+    try {
+       
+        const { scheduler_id, scheduler_content, scheduler_date } = data; 
+        const query = `UPDATE scheduler SET scheduler_content = ?, scheduler_date = ? WHERE scheduler_id = ?`;
+        await db.query(query, [scheduler_content, scheduler_date, scheduler_id]); // 쿼리 실행
+        console.log("스케줄 업데이트 성공:", { scheduler_id, scheduler_content, scheduler_date });
+        return { success: true, message: "스케줄 업데이트 성공" };
+    } catch (error) {
+        console.error("스케줄 업데이트 실패:", error);
+        return { success: false, error: "스케줄 업데이트 실패" };
+    }
+},
 
-    // 스케줄러 항목 업데이트
-    updateschedule: async function (req) {
-        try {
-            const { scheduler_id, scheduler_content, scheduler_date } = req.body;
-            const query = `UPDATE scheduler SET scheduler_content = ?, scheduler_date = ? WHERE scheduler_id = ?`;
-            await db.query(query, [scheduler_content, scheduler_date, scheduler_id]); // query 사용
-            console.log("스케줄 업데이트 성공:", { scheduler_id, scheduler_content, scheduler_date });
-            return { success: true, message: "스케줄 업데이트 성공" };
-        } catch (error) {
-            console.error("스케줄 업데이트 실패:", error);
-            return { success: false, error: "스케줄 업데이트 실패" };
-        }
-    },
 
     // 스케줄러 항목 삭제
     deleteschedule: async function (scheduler_id) {

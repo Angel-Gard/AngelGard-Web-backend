@@ -11,7 +11,7 @@ router.get('/:scheduler_date', schedulerController.getSchedule);
 router.get('/:year/:month', schedulerController.getScheduleByMonth);
 
 // 스케줄러 항목 수정
-router.put('/', schedulerController.updateScheduler);
+router.put('/:scheduler_id', schedulerController.updateScheduler);
 
 // 스케줄러 항목 삭제
 router.delete('/:scheduler_id', schedulerController.deleteScheduler);
