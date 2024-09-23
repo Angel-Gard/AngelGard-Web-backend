@@ -5,7 +5,7 @@ module.exports = {
     // 일지 목록 조회
     getbabyboardList: async function (req, res, next) {
         try {
-            const result = await babyBoardModel.selectDiaryList(req);
+            const result = await babyBoardModel. selectbabyboardList(req);
             if (result) {
                 res.status(200).json(result);
             } else {
@@ -19,7 +19,7 @@ module.exports = {
     // 개별 일지 조회
     getbabyboard: async function (req, res, next) {
         try {
-            const result = await babyBoardModel.selectDiary(req);
+            const result = await babyBoardModel.selectbabyboard(req);
             if (result) {
                 res.status(200).json(result);
             } else {
@@ -34,7 +34,7 @@ module.exports = {
     createbabyboard: async function (req, res, next) {
         try {
             const filePath = req.file ? req.file.path : null; // 파일 업로드가 있을 경우
-            const result = await babyBoardModel.createDiary(req, filePath);
+            const result = await babyBoardModel.createbabyboard(req, filePath);
             if (result) {
                 res.status(201).json({ message: "일지가 성공적으로 생성되었습니다.", baby_board_id: result });
             } else {
@@ -49,7 +49,7 @@ module.exports = {
     updatebabyboard: async function (req, res, next) {
         try {
             const filePath = req.file ? req.file.path : null; // 파일 업로드가 있을 경우
-            const result = await babyBoardModel.updateDiary(req, filePath);
+            const result = await babyBoardModel.updatebabyboard(req, filePath);
             if (result) {
                 res.status(200).json({ message: "일지가 성공적으로 수정되었습니다." });
             } else {
@@ -63,7 +63,7 @@ module.exports = {
     // 일지 삭제
     deletebabyboard: async function (req, res, next) {
         try {
-            const result = await babyBoardModel.deleteDiary(req);
+            const result = await babyBoardModel.deletebabyboard(req);
             if (result) {
                 res.status(200).json({ message: "일지가 성공적으로 삭제되었습니다." });
             } else {
