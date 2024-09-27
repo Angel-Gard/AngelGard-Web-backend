@@ -6,7 +6,7 @@ module.exports = {
         try {
             const { user_login_id, scheduler_content, scheduler_date } = req.body;
             const query = `INSERT INTO scheduler (user_login_id, scheduler_content, scheduler_date) VALUES (?, ?, ?)`;
-            await db.query(query, [user_login_id, scheduler_content, scheduler_date]); // query 사용
+            await db.query(query, [user_login_id, scheduler_content, scheduler_date]); 
             console.log("스케줄 생성 성공:", { user_login_id, scheduler_content, scheduler_date });
             return { success: true, message: "스케줄 생성 성공" };
         } catch (error) {
@@ -19,7 +19,7 @@ module.exports = {
     getschedule: async function (scheduler_date) {
         try {
             const query = `SELECT * FROM scheduler WHERE scheduler_date = ?`;
-            const [rows] = await db.query(query, [scheduler_date]); // 첫 번째 결과만 가져옴
+            const [rows] = await db.query(query, [scheduler_date]);
             if (rows.length > 0) {
                 console.log("스케줄 조회 성공:", { scheduler_date });
                 return { success: true, data: rows };
@@ -34,7 +34,7 @@ module.exports = {
 
     getscheduleByMonth: async function (year, month) {
         try {
-            // year과 month를 이용해 해당 월의 스케줄을 가져오는 쿼리 작성
+          
             const query = `SELECT * FROM scheduler WHERE YEAR(scheduler_date) = ? AND MONTH(scheduler_date) = ?`;
             const [rows] = await db.query(query, [year, month]); // 해당 월의 데이터만 가져옴
     
@@ -71,7 +71,7 @@ updateschedule: async function (data) {
     deleteschedule: async function (scheduler_id) {
         try {
             const query = `DELETE FROM scheduler WHERE scheduler_id = ?`;
-            await db.query(query, [scheduler_id]); // query 사용
+            await db.query(query, [scheduler_id]); 
             console.log("스케줄 삭제 성공:", { scheduler_id });
             return { success: true, message: "스케줄 삭제 성공" };
         } catch (error) {
