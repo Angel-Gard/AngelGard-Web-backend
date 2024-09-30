@@ -51,7 +51,7 @@ exports.Babyeating = async (req,res) => {
             if(beating.length < 1){
                 res.status(403).json({ result: false ,message:'실패'});
             }else{
-                res.status(500).json({ result: true,message:'성공' });
+                res.status(200).json({ result: true,message:'성공' });
             }
         }
     }
@@ -82,7 +82,7 @@ exports.Pumping = async (req,res) => {
             if(bintake.length < 1){
                 res.status(403).json({ result: false ,message:'실패'});
             }else{
-                res.status(500).json({ result: true,message:'성공' });
+                res.status(200).json({ result: true,message:'성공' });
             }
         }
     }
@@ -112,7 +112,7 @@ exports.InsertMS = async (req,res) => {
             if(insetime.length <1){
                 res.status(403).json({ result: false ,message:'실패'});
             }else{
-                res.status(500).json({ result: true,message:'성공' });
+                res.status(200).json({ result: true,message:'성공' });
             }
         }
     }
