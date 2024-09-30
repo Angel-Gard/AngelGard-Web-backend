@@ -7,6 +7,8 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const methodOverride = require("method-override");
 
+const fcm = require('./fcm');
+
 // 라우터 임포트
 const testRouter = require("./routes/testRouter");
 const boardRouter = require("./routes/boardRouter");
@@ -22,6 +24,8 @@ const userRouter = require("./routes/user");
 const imageRouter = require("./routes/image");
 const dthRouter = require("./routes/dthmb");
 const eatRouter = require("./routes/eating");
+
+const pushRouter = require("./routes/notificationRoutes");
 
 
 // view engine setup
@@ -73,6 +77,10 @@ app.use("/eat",eatRouter);
 
 app.use('/scheduler', schedulerRouter); 
 app.use('/babyboard', babyboardRouter);
+
+// Initialize FCM
+fcm.connect();
+app.use('/push',pushRouter);
 
 // 이미지 반환
 app.use("/img/thumbnails", express.static("../resource/img/thumbnails"));
