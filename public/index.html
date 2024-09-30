@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FCM Token Test</title>
+    <!-- Use CDN for Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js"></script>
+</head>
+<body>
+    <h1>FCM Token Test</h1>
+    <button id="requestPermission">Get FCM Token</button>
+    <p id="token"></p>
+
+    <script>
+        // Firebase configuration (Replace with your Firebase project config)
+
+        const firebaseConfig ={
+        apiKey : serviceAccount.apiKey,
+        authDomain : serviceAccount.authDomain,
+        projectId : serviceAccount.projectId,
+        storageBucket : serviceAccount.storageBucket,
+        messagingSenderId : serviceAccount.messagingSenderId,
+        appId : serviceAccount.appId,
+        measurementId : serviceAccount.measurementId
+        };
+
+         // Initialize Firebase
+         firebase.initializeApp(firebaseConfig);
+
+// Initialize Firebase Messaging
+const messaging = firebase.messaging();
+
+// Register the service worker
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+        .then((registration) => {
+            console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch((error) => {
+            console.error('Service Worker registration failed:', error);
+        });
+}
+
+// Request permission and get token
+document.getElementById('requestPermission').addEventListener('click', () => {
+    messaging.requestPermission()
+        .then(() => {
+            console.log('Notification permission granted.');
+            return messaging.getToken();
+        })
+        .then((token) => {
+            console.log('FCM Token:', token);
+            document.getElementById('token').innerText = `FCM Token: ${token}`;
+        })
+        .catch((error) => {
+            console.error('Error getting token', error);
+            document.getElementById('token').innerText = 'Failed to get token. See console for error details.';
+        });
+});
+</script>
+</body>
+</html>
