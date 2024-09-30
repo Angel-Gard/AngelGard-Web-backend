@@ -5,7 +5,7 @@ module.exports = {
     // 일지 목록 조회
     getbabyboardList: async function (req, res, next) {
         try {
-            const result = await babyBoardModel. selectbabyboardList(req);
+            const result = await babyBoardModel. getbabyboardList(req);
             if (result) {
                 res.status(200).json(result);
             } else {
