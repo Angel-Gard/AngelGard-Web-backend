@@ -181,7 +181,7 @@ exports.Selectpum = async (req,res) => {
         console.log("오늘 펌: ",group_pum);
         console.log("어제 펌: ",y_group_pum);
 
-        const total_group_pum = group_pum.reduce((accumulator, current) => {
+        let total_group_pum = group_pum.reduce((accumulator, current) => {
             return accumulator + current.intake_amount;
         }, 0);
 
@@ -194,8 +194,12 @@ exports.Selectpum = async (req,res) => {
         
         if(!group_pum || y_group_pum){//실패
             if(!group_pum){
-                return res.status(401).json({result:false,message:"오늘 기록이 없습니다."})
+                console.log("오늘 기록x");
+                total_group_pum =0;
+                total_ygroup_pum = 0;
+                return res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
             }else{
+                console.log("어제");
                 total_ygroup_pum = 0;
                 return res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
             }
