@@ -191,22 +191,36 @@ exports.Selectpum = async (req,res) => {
 
         console.log("토탈 : ",total_group_pum);
         console.log("토탈 : ",total_ygroup_pum);
-        
-        if(!group_pum || y_group_pum){//실패
-            if(!group_pum){
-                console.log("오늘 기록x");
-                total_group_pum =0;
-                total_ygroup_pum = 0;
-                return res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
-            }else{
-                console.log("어제");
-                total_ygroup_pum = 0;
-                return res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
-            }
 
-        }else{
+        if (Array.isArray(group_pum) && group_pum.length === 0) {
+            console.log("오늘 빈 배열입니다.");
+            total_group_pum =0;
             return res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
         }
+
+        if (Array.isArray(y_group_pum) && group_pum.length === 0) {
+            console.log("어제 빈 배열입니다.");
+            total_ygroup_pum = 0;
+            return res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
+        }
+
+        return res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
+        
+        // if(!group_pum || y_group_pum){//실패
+        //     if(!group_pum){
+        //         console.log("오늘 기록x");
+        //         total_group_pum =0;
+        //         total_ygroup_pum = 0;
+        //         return res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
+        //     }else{
+        //         console.log("어제");
+        //         total_ygroup_pum = 0;
+        //         return res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
+        //     }
+
+        // }else{
+        //     return res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
+        // }
     }
 }
 
