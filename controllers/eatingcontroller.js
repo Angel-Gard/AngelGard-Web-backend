@@ -178,8 +178,8 @@ exports.Selectpum = async (req,res) => {
     }else{
         const group_pum = await EatM.Mpum(today_sel_pum);
         const y_group_pum = await EatM.Mpum(y_sel_pum);
-        console.log(group_pum);
-        console.log(y_group_pum);
+        console.log("오늘 펌: ",group_pum);
+        console.log("어제 펌: ",y_group_pum);
 
         const total_group_pum = group_pum.reduce((accumulator, current) => {
             return accumulator + current.intake_amount;
@@ -189,16 +189,19 @@ exports.Selectpum = async (req,res) => {
             return accumulator + current.intake_amount;
         }, 0);
 
+        console.log("토탈 : ",total_group_pum);
+        console.log("토탈 : ",total_ygroup_pum);
+        
         if(!group_pum || y_group_pum){//실패
             if(!group_pum){
-                res.status(401).json({result:false,message:"오늘 기록이 없습니다."})
+                return res.status(401).json({result:false,message:"오늘 기록이 없습니다."})
             }else{
                 total_ygroup_pum = 0;
-                res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
+                return res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
             }
 
         }else{
-            res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
+            return res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
         }
     }
 }
