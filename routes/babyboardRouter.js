@@ -5,7 +5,7 @@ const multer = require('multer'); // 파일 업로드를 위한 미들웨어
 const upload = multer({ dest: 'uploads/' }); // 파일이 업로드될 경로
 
 // 일지 목록 조회
-router.get('/', babyBoardController.getbabyboardList);
+router.get('/:user_login_id', babyBoardController.getbabyboardList);
     
 // 개별 일지 조회
 router.get('/:baby_board_id', babyBoardController.getbabyboard);

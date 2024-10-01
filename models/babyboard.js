@@ -2,31 +2,27 @@ const db = require("../config/db");
 
 module.exports = {
     // 육아일지 목록 조회
-    getbabyboardList: async function (req, res) {
-        const user_login_id = req.user.user_login_id;  // 로그인된 사용자 ID 가져오기
+    getbabyboardList: async function (req) {
+        const user_login_id = req.params.user_login_id;  // URL에서 user_login_id 추출
         if (!user_login_id) {
-            return res.status(401).json({ message: '로그인이 필요합니다.' });
+            throw new Error('user_login_id가 필요합니다.');
         }
-    
-        const pageNum = Number(req.query.page) || 1;  // 쿼리스트링으로 받을 페이지 번호 값, 기본값은 1
-        const contentSize = 5;  // 페이지에서 보여줄 컨텐츠 수
-        const pnSize = 5;  // 페이지네이션 개수 설정
-        const skipSize = (pageNum - 1) * contentSize;  // 다음 페이지 갈 때 건너뛸 리스트 개수
-    
-        // 필터링된 전체 일지 개수 조회 쿼리
-        const sql = `SELECT count(*) AS count FROM baby_board WHERE baby_board.user_login_id = ?`;
+
+        const pageNum = Number(req.query.page) || 1;
+        const contentSize = 5;
+        const skipSize = (pageNum - 1) * contentSize;
+
+        // 특정 user_login_id에 대한 전체 일지 개수 조회 쿼리
+        const sql = `SELECT count(*) AS count FROM baby_board WHERE user_login_id = ?`;
         const [rows] = await db.query(sql, [user_login_id]);
-    
-        const totalCount = Number(rows[0].count);  // 전체 일지 개수
-        const pnTotal = Math.ceil(totalCount / contentSize);  // 페이지네이션의 전체 카운트
-        const pnStart = (Math.ceil(pageNum / pnSize) - 1) * pnSize + 1;  // 현재 페이지의 페이지네이션 시작 번호
-        let pnEnd = pnStart + pnSize - 1;  // 현재 페이지의 페이지네이션 끝 번호
-    
-        if (pnEnd > pnTotal) {
-            pnEnd = pnTotal;
-        }
-    
-        // 사용자의 일지 목록 조회 쿼리
+
+        const totalCount = Number(rows[0].count);
+        const pnTotal = Math.ceil(totalCount / contentSize);
+        const pnStart = (Math.ceil(pageNum / 5) - 1) * 5 + 1;
+        let pnEnd = pnStart + 4;
+        if (pnEnd > pnTotal) pnEnd = pnTotal;
+
+        // 특정 user_login_id에 맞는 일지 목록 조회 쿼리
         const sql2 = `
             SELECT baby_board.baby_board_id, baby_board.baby_board_title, baby_board.baby_board_date, 
                    baby_board.baby_board_image, baby_board.baby_board_content, user.user_nickname 
@@ -36,34 +32,27 @@ module.exports = {
             GROUP BY baby_board.baby_board_id
             ORDER BY baby_board_id DESC 
             LIMIT ?, ?`;
-    
-        const [rows2] = await db.query(sql2, [user_login_id, skipSize, contentSize]);  // user_login_id 전달
-    
+
+        const [rows2] = await db.query(sql2, [user_login_id, skipSize, contentSize]);
+
         if (rows2.length === 0) {
-            return res.status(404).json({ message: '조회된 일지가 없습니다.' });
+            return { contents: [] };  // 빈 결과 반환
         }
-    
-        // 날짜 형식을 yyyy.mm.dd로 변환
+
         rows2.forEach((row) => {
             const date = new Date(row.baby_board_date);
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, "0");
-            const day = String(date.getDate()).padStart(2, "0");
-            row.baby_board_date = `${year}.${month}.${day}`;
+            row.baby_board_date = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
         });
-    
-        const result = {
+
+        return {
             totalCount,
             pageNum,
             pnStart,
             pnEnd,
             pnTotal,
-            contents: rows2,
+            contents: rows2
         };
-    
-        return res.status(200).json(result);  // 조회 결과 반환
     },
-    
     // 개별 육아일지 조회
     selectbabyboard: async function (req, res) {
         const sql = `SELECT baby_board.baby_board_date, baby_board.baby_board_title, baby_board.baby_board_content, baby_board.baby_board_image, user.user_nickname 
