@@ -178,8 +178,8 @@ exports.Selectpum = async (req,res) => {
     }else{
         const group_pum = await EatM.Mpum(today_sel_pum);
         const y_group_pum = await EatM.Mpum(y_sel_pum);
-        //console.log(group_pum);
-        //console.log(y_group_pum);
+        console.log(group_pum);
+        console.log(y_group_pum);
 
         const total_group_pum = group_pum.reduce((accumulator, current) => {
             return accumulator + current.intake_amount;
