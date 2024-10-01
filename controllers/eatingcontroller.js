@@ -143,7 +143,7 @@ exports.SelectEat = async (req,res) => {
             return accumulator + current.feed_amount;
         }, 0);
 
-        const total_ygroup_eat = y_group_eat.reduce((accumulator, current) => {
+        let total_ygroup_eat = y_group_eat.reduce((accumulator, current) => {
             return accumulator + current.feed_amount;
         }, 0);
 
@@ -151,10 +151,11 @@ exports.SelectEat = async (req,res) => {
             if(!group_eat){
                 res.status(401).json({result:false,message:"오늘 기록이 없습니다."})
             }else{
-                res.status(401).json({result:false,message:"전날 기록이 없습니다."})
+                total_ygroup_eat = 0;
+                res.status(200).json({"오늘 수유량":total_group_eat,"전날 수유량":total_ygroup_eat});
             }
         }else{
-            res.status(500).json({"오늘 수유량":total_group_eat,"전날 수유량":total_ygroup_eat});
+            res.status(200).json({"오늘 수유량":total_group_eat,"전날 수유량":total_ygroup_eat});
         }
     }
 
@@ -184,7 +185,7 @@ exports.Selectpum = async (req,res) => {
             return accumulator + current.intake_amount;
         }, 0);
 
-        const total_ygroup_pum = y_group_pum.reduce((accumulator, current) => {
+        let total_ygroup_pum = y_group_pum.reduce((accumulator, current) => {
             return accumulator + current.intake_amount;
         }, 0);
 
@@ -192,11 +193,12 @@ exports.Selectpum = async (req,res) => {
             if(!group_pum){
                 res.status(401).json({result:false,message:"오늘 기록이 없습니다."})
             }else{
-                res.status(401).json({result:false,message:"전날 기록이 없습니다."})
+                total_ygroup_pum = 0;
+                res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
             }
 
         }else{
-            res.status(500).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
+            res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
         }
     }
 }
@@ -223,17 +225,18 @@ exports.SelectMS = async (req,res) => {
             return accumulator + current.m_time;
         }, 0);
 
-        const total_ygroup_time = y_group_time.reduce((accumulator, current) => {
+        let total_ygroup_time = y_group_time.reduce((accumulator, current) => {
             return accumulator + current.m_time;
         }, 0);
         if(!group_time || !y_group_time){//실패
             if(!group_time){
                 res.status(401).json({result:false,message:"오늘 기록이 없습니다."})
             }else{
-                res.status(401).json({result:false,message:"전날 기록이 없습니다."})
+                total_ygroup_time = 0;
+                res.status(200).json({"오늘 총시간":total_group_time,"전날 총시간":total_ygroup_time});
             }
         }else{
-            res.status(500).json({"오늘 총시간":total_group_time,"전날 총시간":total_ygroup_time});
+            res.status(200).json({"오늘 총시간":total_group_time,"전날 총시간":total_ygroup_time});
         }
     }
 
