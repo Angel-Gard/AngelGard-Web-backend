@@ -3,7 +3,8 @@ importScripts('https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js');
 
 
-const serviceAccount = require('./path/angelguard-push-firebase-adminsdk-mkcok-cce94130f5.json');
+//const serviceAccount = require('./path/angelguard-push-firebase-adminsdk-mkcok-cce94130f5.json');
+
 // Firebase 초기화 (위에서 사용한 firebaseConfig와 동일하게 설정)
 
     const firebaseConfig ={
