@@ -4,8 +4,7 @@ const babyBoardController = require('../controllers/babyboardController');
 const multer = require('multer'); // 파일 업로드를 위한 미들웨어
 const upload = multer({ dest: 'uploads/' }); // 파일이 업로드될 경로
 
-// babyboardRouter.js의 첫 부분에 로그 추가
-console.log("babyboardRouter initialized");
+
 
 // 일지 목록 조회
 router.get('/list/:user_login_id', babyBoardController.getbabyboardList);
