@@ -54,21 +54,21 @@ module.exports = {
         };
     },
     // 개별 육아일지 조회
-selectbabyboard: async function (req, res) {
-    const sql = `SELECT baby_board.baby_board_date, baby_board.baby_board_title, baby_board.baby_board_content, baby_board.baby_board_image, user.user_nickname 
-                 FROM baby_board LEFT JOIN user ON baby_board.user_login_id = user.user_login_id 
-                 WHERE baby_board_id = ?`;
-    const [rows] = await db.query(sql, [Number(req.params.baby_board_id)]);
-
-    if (rows.length === 0) {
-        console.log(`baby_board_id ${req.params.baby_board_id} : 일지 조회 실패`);
-        return false;
-    }
-
-    // 날짜 형식을 yyyy-mm-dd로 변환
-    const board = rows[0];
+    selectbabyboard: async function (req) {
+        const sql = `SELECT baby_board.baby_board_date, baby_board.baby_board_title, baby_board.baby_board_content, baby_board.baby_board_image, user.user_nickname 
+                     FROM baby_board LEFT JOIN user ON baby_board.user_login_id = user.user_login_id 
+                     WHERE baby_board_id = ?`;
     
-    if (board.baby_board_date) {
+        const [rows] = await db.query(sql, [Number(req.params.baby_board_id)]);
+    
+        // rows가 배열이 아닐 경우에 대한 처리
+        if (!Array.isArray(rows) || rows.length === 0) {
+            console.log(`baby_board_id ${req.params.baby_board_id} : 일지 조회 실패`);
+            return false;
+        }
+    
+        // 날짜 형식을 yyyy-mm-dd로 변환
+        const board = rows[0];
         const date = new Date(board.baby_board_date);
         
         if (!isNaN(date.getTime())) {
@@ -77,17 +77,12 @@ selectbabyboard: async function (req, res) {
             const day = String(date.getDate()).padStart(2, "0");
             board.baby_board_date = `${year}-${month}-${day}`;
         } else {
-            console.log(`유효하지 않은 날짜 형식: ${board.baby_board_date}`);
-            board.baby_board_date = null;  // 또는 기본값 설정
+            console.log("유효하지 않은 날짜입니다.");
+            board.baby_board_date = null;  // 날짜가 유효하지 않을 경우
         }
-    } else {
-        console.log(`날짜 값이 없습니다.`);
-        board.baby_board_date = null;  // 날짜가 없는 경우에 대한 처리
-    }
-
-    return board;
-},
-
+    
+        return board;
+    },
     // 육아일지생성
     createbabyboard: async function (req, filePath) {
         const sql = `INSERT INTO baby_board (user_login_id, baby_board_title, baby_board_content, baby_board_image, baby_board_date) VALUES(?,?,?,?,NOW())`;

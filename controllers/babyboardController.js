@@ -19,13 +19,9 @@ module.exports = {
     // 개별 일지 조회
     getbabyboard: async function (req, res, next) {
         try {
-            const babyBoardId = Number(req.params.baby_board_id);
-            
-            if (isNaN(babyBoardId) || babyBoardId <= 0) {
-                return res.status(400).json({ message: "유효하지 않은 일지 ID입니다." });
-            }
-    
             const result = await babyBoardModel.selectbabyboard(req);
+            
+            // result가 유효한지 확인
             if (result) {
                 res.status(200).json(result);
             } else {
