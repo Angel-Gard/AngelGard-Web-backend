@@ -79,7 +79,7 @@ app.use('/scheduler', schedulerRouter);
 app.use('/babyboard', babyboardRouter);
 
 // Initialize FCM
-fcm.connect();
+//fcm.connect();
 app.use('/push',pushRouter);
 
 // 이미지 반환

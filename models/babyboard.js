@@ -54,27 +54,39 @@ module.exports = {
         };
     },
     // 개별 육아일지 조회
-    selectbabyboard: async function (req, res) {
-        const sql = `SELECT baby_board.baby_board_date, baby_board.baby_board_title, baby_board.baby_board_content, baby_board.baby_board_image, user.user_nickname 
-                     FROM baby_board LEFT JOIN user ON baby_board.user_login_id = user.user_login_id 
-                     WHERE baby_board_id = ?`;
-        const [rows] = await db.query(sql, [Number(req.params.baby_board_id)]);
+selectbabyboard: async function (req, res) {
+    const sql = `SELECT baby_board.baby_board_date, baby_board.baby_board_title, baby_board.baby_board_content, baby_board.baby_board_image, user.user_nickname 
+                 FROM baby_board LEFT JOIN user ON baby_board.user_login_id = user.user_login_id 
+                 WHERE baby_board_id = ?`;
+    const [rows] = await db.query(sql, [Number(req.params.baby_board_id)]);
 
-        if (rows.length === 0) {
-            console.log(`baby_board_id ${req.params.baby_board_id} : 일지 조회 실패`);
-            return false;
-        }
+    if (rows.length === 0) {
+        console.log(`baby_board_id ${req.params.baby_board_id} : 일지 조회 실패`);
+        return false;
+    }
 
-        // 날짜 형식을 yyyy-mm-dd로 변환
-        const board = rows[0];
+    // 날짜 형식을 yyyy-mm-dd로 변환
+    const board = rows[0];
+    
+    if (board.baby_board_date) {
         const date = new Date(board.baby_board_date);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-        board.baby_board_date = `${year}-${month}-${day}`;
+        
+        if (!isNaN(date.getTime())) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+            board.baby_board_date = `${year}-${month}-${day}`;
+        } else {
+            console.log(`유효하지 않은 날짜 형식: ${board.baby_board_date}`);
+            board.baby_board_date = null;  // 또는 기본값 설정
+        }
+    } else {
+        console.log(`날짜 값이 없습니다.`);
+        board.baby_board_date = null;  // 날짜가 없는 경우에 대한 처리
+    }
 
-        return board;
-    },
+    return board;
+},
 
     // 육아일지생성
     createbabyboard: async function (req, filePath) {
