@@ -61,6 +61,12 @@ app.options("*", (req, res) => {
     res.sendStatus(200); // 모든 경로에 대해 200 OK 반환
 });
 
+// 라우터로 들어오는 모든 요청을 로깅
+app.use((req, res, next) => {
+    console.log(`Received request: ${req.method} ${req.path}`);
+    next();
+});
+
 // 라우터 사용
 app.use("/", indexRouter);
 app.use("/test", testRouter);
@@ -73,18 +79,24 @@ app.use("/", indexRouter);
 app.use("/user", userRouter);
 app.use("/image", imageRouter);
 app.use("/dth", dthRouter);
-app.use("/eat",eatRouter);
+app.use("/eat", eatRouter);
 
 app.use('/scheduler', schedulerRouter); 
-app.use('/babyboard', babyboardRouter);
+
+// babyboard 라우터로 들어오는 요청 로그 추가
+app.use('/babyboard', (req, res, next) => {
+    console.log("Routing to babyboard...");
+    next();
+}, babyboardRouter);
+
+
 
 // Initialize FCM
 //fcm.connect();
-app.use('/push',pushRouter);
+app.use('/push', pushRouter);
 
 // 이미지 반환
 app.use("/img/thumbnails", express.static("../resource/img/thumbnails"));
-
 app.use("/img", express.static("../resource/img"));
 
 // catch 404 and forward to error handler

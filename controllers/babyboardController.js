@@ -19,9 +19,9 @@ module.exports = {
     // 개별 일지 조회
     getbabyboard: async function (req, res, next) {
         try {
+            console.log("babyboardController.getbabyboard called with ID:", req.params.baby_board_id);
             const result = await babyBoardModel.getbabyboard(req);
             
-            // result가 유효한지 확인
             if (result) {
                 res.status(200).json(result);
             } else {
@@ -31,7 +31,6 @@ module.exports = {
             next(err);
         }
     },
-
     // 일지 생성
     createbabyboard: async function (req, res, next) {
         try {
