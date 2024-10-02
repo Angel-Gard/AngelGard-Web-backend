@@ -54,7 +54,7 @@ module.exports = {
         };
     },
     // 개별 육아일지 조회
-    selectbabyboard: async function (req) {
+    getbabyboard: async function (req) {
         const sql = `SELECT baby_board.baby_board_date, baby_board.baby_board_title, baby_board.baby_board_content, baby_board.baby_board_image, user.user_nickname 
                      FROM baby_board LEFT JOIN user ON baby_board.user_login_id = user.user_login_id 
                      WHERE baby_board_id = ?`;
@@ -83,6 +83,7 @@ module.exports = {
     
         return board;
     },
+
     // 육아일지생성
     createbabyboard: async function (req, filePath) {
         const sql = `INSERT INTO baby_board (user_login_id, baby_board_title, baby_board_content, baby_board_image, baby_board_date) VALUES(?,?,?,?,NOW())`;
