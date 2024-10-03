@@ -43,7 +43,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // CORS 처리 -- 수정필요
 app.use(cors());
 app.use((req, res, next) => {
-    const allowedOrigins = ["http://louk342.iptime.org:8080", "http://localhost:3000","http://34.47.76.73:3000"];
+    const allowedOrigins = ["http://louk342.iptime.org:8080", "http://localhost:3000", "http://34.47.76.73:3000"];
     const origin = req.headers.origin;
 
     if (allowedOrigins.includes(origin)) {
@@ -52,14 +52,24 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE, OPTIONS"); // 허용할 HTTP 메서드
     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization"); // 허용할 헤더
     res.header("Access-Control-Allow-Credentials", "true"); // 자격 증명 허용
+
     next();
 });
-// CORS
 
 // OPTIONS 메서드에 대한 핸들러 추가 (프리플라이트 요청 처리)
 app.options("*", (req, res) => {
     res.sendStatus(200); // 모든 경로에 대해 200 OK 반환
 });
+
+// CORS
+
+// 라우터로 들어오는 모든 요청을 로깅
+app.use((req, res, next) => {
+    console.log(`Received request: ${req.method} ${req.path}`);
+    next();
+});
+
+
 
 // 라우터로 들어오는 모든 요청을 로깅
 app.use((req, res, next) => {
