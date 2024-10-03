@@ -150,28 +150,17 @@ exports.SelectEat = async (req,res) => {
         if (Array.isArray(group_eat) && group_eat.length === 0) {
             console.log("오늘 빈 배열입니다.");
             total_group_eat =0;
-            return res.status(200).json({"오늘 유축량":total_group_eat,"전날 유축량":total_ygroup_eat});
+            return res.status(200).json({"오늘 섭취량":total_group_eat,"전날 섭취량":total_ygroup_eat});
         }
 
         if (Array.isArray(y_group_eat) && y_group_eat.length === 0) {
             console.log("어제 빈 배열입니다.");
             total_ygroup_eat = 0;
-            return res.status(200).json({"오늘 유축량":total_group_eat,"전날 유축량":total_ygroup_eat});
+            return res.status(200).json({"오늘 섭취량":total_group_eat,"전날 섭취량":total_ygroup_eat});
         }
 
-        return res.status(200).json({"오늘 유축량":total_group_eat,"전날 유축량":total_ygroup_eat});
+        return res.status(200).json({"오늘 섭취량":total_group_eat,"전날 섭취량":total_ygroup_eat});
 
-
-        //if(!group_eat ||y_group_eat ){//실패
-        //    if(!group_eat){
-        //        res.status(401).json({result:false,message:"오늘 기록이 없습니다."})
-        //    }else{
-        //        total_ygroup_eat = 0;
-        //        res.status(200).json({"오늘 수유량":total_group_eat,"전날 수유량":total_ygroup_eat});
-        //    }
-        //}else{
-        //    res.status(200).json({"오늘 수유량":total_group_eat,"전날 수유량":total_ygroup_eat});
-        //}
     }
 
     
@@ -221,21 +210,6 @@ exports.Selectpum = async (req,res) => {
 
         return res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
         
-        // if(!group_pum || y_group_pum){//실패
-        //     if(!group_pum){
-        //         console.log("오늘 기록x");
-        //         total_group_pum =0;
-        //         total_ygroup_pum = 0;
-        //         return res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
-        //     }else{
-        //         console.log("어제");
-        //         total_ygroup_pum = 0;
-        //         return res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
-        //     }
-
-        // }else{
-        //     return res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
-        // }
     }
 }
 
@@ -257,23 +231,27 @@ exports.SelectMS = async (req,res) => {
         //console.log(group_time);
         //console.log(y_group_time);
 
-        const total_group_time = group_time.reduce((accumulator, current) => {
+        let total_group_time = group_time.reduce((accumulator, current) => {
             return accumulator + current.m_time;
         }, 0);
 
         let total_ygroup_time = y_group_time.reduce((accumulator, current) => {
             return accumulator + current.m_time;
         }, 0);
-        if(!group_time || !y_group_time){//실패
-            if(!group_time){
-                res.status(401).json({result:false,message:"오늘 기록이 없습니다."})
-            }else{
-                total_ygroup_time = 0;
-                res.status(200).json({"오늘 총시간":total_group_time,"전날 총시간":total_ygroup_time});
-            }
-        }else{
-            res.status(200).json({"오늘 총시간":total_group_time,"전날 총시간":total_ygroup_time});
+
+        if (Array.isArray(group_time) && group_time.length === 0) {
+            console.log("오늘 빈 배열입니다.");
+            total_group_time =0;
+            return res.status(200).json({"오늘 모유수유 시간":total_group_time,"전날 모유수유 시간":total_ygroup_time});
         }
+
+        if (Array.isArray(y_group_time) && y_group_time.length === 0) {
+            console.log("어제 빈 배열입니다.");
+            total_ygroup_time = 0;
+            return res.status(200).json({"오늘 모유수유 시간":total_group_time,"전날 모유수유 시간":total_ygroup_time});
+        }
+
+        return res.status(200).json({"오늘 모유수유 시간":total_group_time,"전날 모유수유 시간":total_ygroup_time});
     }
 
 }
