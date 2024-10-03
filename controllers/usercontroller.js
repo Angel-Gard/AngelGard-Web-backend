@@ -53,28 +53,36 @@ exports.CsignUp = async (req, res) => {
 
 // 로그인
 exports.Clogin = async (req, res) => {
-    const { user_login_id, pw } = req.body;
-    try {
-        if (!user_login_id || !pw) {
-            res.status(403).json({ message: '정보를 모두 입력해주세요' });
-        } else {
-            const result = await User.Mlogin(req.body);
-            if (result.length >= 1) {
-                const user = result[0];
-                const match = await bcrypt.compare(req.body.pw, user.user_pw);
-                if (match) {
-                    const token = jwt.sign({ user_login_id: user.user_login_id, username: user.username }, secretKey, { expiresIn: '1h' });
-                    res.json({ result: true, message: '로그인 성공', token: token, data: { user_nickname: user.user_nickname, user_login_id: user.user_login_id } });
-                } else {
-                    res.status(406).json({ result: false, message: '비밀번호가 일치하지 않습니다.' });
-                }
-            } else {
-                res.status(405).json({ result: false, message: '사용자를 찾을 수 없습니다.' });
-            }
-        }
-    } catch (error) {
-        res.status(500).json({ result: false, message: '로그인 실패', error: error.message });
+    const { user_login_id, pw, user_device } = req.body;
+    const [ Udev ] = await User.SelDevlo(user_login_id);
+    
+    if(user_device !== Udev.user_device){
+        const ch_val = {user_device,user_login_id};
+        await User.UpdatDev(ch_val);
+        console.log("업데이트 완료");
     }
+        try {
+            if (!user_login_id || !pw) {
+                res.status(403).json({ message: '정보를 모두 입력해주세요' });
+            } else {
+                const result = await User.Mlogin(req.body);
+                if (result.length >= 1) {
+                    const user = result[0];
+                    const match = await bcrypt.compare(req.body.pw, user.user_pw);
+                    if (match) {
+                        const token = jwt.sign({ user_login_id: user.user_login_id }, secretKey, { expiresIn: '1h' });
+                        res.json({ result: true, message: '로그인 성공', token: token, data: { user_nickname: user.user_nickname, user_login_id: user.user_login_id } });
+                    } else {
+                        res.status(406).json({ result: false, message: '비밀번호가 일치하지 않습니다.' });
+                    }
+                } else {
+                    res.status(405).json({ result: false, message: '사용자를 찾을 수 없습니다.' });
+                }
+            }
+        } catch (error) {
+            res.status(500).json({ result: false, message: '로그인 실패', error: error.message });
+        }
+    
 };
 
 // 로그아웃
