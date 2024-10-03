@@ -90,3 +90,51 @@ exports.Selectbabyid = async (data) => { // baby_id 찾기
     return result[0].baby_id;
 }
 
+//유저 고유 id 찾기
+exports.SelUid = async (data) => {
+    const query = `SELECT user_id,user_device FROM user WHERE user_login_id = ?`;
+    try{
+        const rows = await pool.query(query,data);
+        console.log('data',rows);
+        return [rows];
+    }catch (error){
+        console.log('Database Query Error : ',error);
+    }
+}
+
+//유저 id로 device값 찾기
+exports.SelDev = async (data) => {
+    console.log('넘어온 값',data)
+    const query = `select user_fcmtoken from user where user_id = ?`
+    try{
+        const [rows] = await pool.query(query,data.user_id);
+        console.log('data',rows);
+        return rows;
+    }catch{
+        console.log('Database Query Error : ',error);
+    }
+}
+
+// user_fcmtoken 업데이트
+exports.UpdatDev = async (data) => {
+    const query = `update user set user_fcmtoken= ?  where user_login_id = ?`;
+    try{
+        const [rows] = await pool.query(query,[data.user_device,data.user_login_id]);
+        console.log(rows);
+        return [rows];
+    }catch{
+        console.log('Database Query Error : ',error);
+    }
+}
+
+//user_login_id로 user_fcmtoken 찾기
+exports.SelDevlo = async (data) => {
+    const query = `select user_fcmtoken from user where user_login_id = ?`
+    try{
+        const [rows] = await pool.query(query,data);
+        // console.log('data',rows);
+        return rows;
+    }catch{
+        console.log('Database Query Error : ',error);
+    }
+}
