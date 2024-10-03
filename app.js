@@ -43,7 +43,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // CORS 처리 -- 수정필요
 app.use(cors());
 app.use((req, res, next) => {
-    const allowedOrigins = ["http://louk342.iptime.org:8080", "http://localhost:3000"];
+    const allowedOrigins = ["http://louk342.iptime.org:8080", "http://localhost:3000","http://34.47.76.73:3000"];
     const origin = req.headers.origin;
 
     if (allowedOrigins.includes(origin)) {
