@@ -6,7 +6,8 @@ const upload = multer({ dest: 'uploads/' }); // 파일이 업로드될 경로
 
 
 
-
+// 일지 목록 조회
+router.get('/list/:user_login_id', babyBoardController.getbabyboardList);
 
 // 개별 일지 조회
 router.get('/:baby_board_id', (req, res, next) => {

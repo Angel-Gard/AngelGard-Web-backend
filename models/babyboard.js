@@ -2,7 +2,57 @@ const db = require("../config/db");
 
 module.exports = {
     // 육아일지 목록 조회
-   
+    getbabyboardList: async function (req) {
+        const user_login_id = req.params.user_login_id;  // URL에서 user_login_id 추출
+        if (!user_login_id) {
+            throw new Error('user_login_id가 필요합니다.');
+        }
+
+        const pageNum = Number(req.query.page) || 1;
+        const contentSize = 5;
+        const skipSize = (pageNum - 1) * contentSize;
+
+        // 특정 user_login_id에 대한 전체 일지 개수 조회 쿼리
+        const sql = `SELECT count(*) AS count FROM baby_board WHERE user_login_id = ?`;
+        const [rows] = await db.query(sql, [user_login_id]);
+
+        const totalCount = Number(rows[0].count);
+        const pnTotal = Math.ceil(totalCount / contentSize);
+        const pnStart = (Math.ceil(pageNum / 5) - 1) * 5 + 1;
+        let pnEnd = pnStart + 4;
+        if (pnEnd > pnTotal) pnEnd = pnTotal;
+
+        // 특정 user_login_id에 맞는 일지 목록 조회 쿼리
+        const sql2 = `
+            SELECT baby_board.baby_board_id, baby_board.baby_board_title, baby_board.baby_board_date, 
+                   baby_board.baby_board_image, baby_board.baby_board_content, user.user_nickname 
+            FROM baby_board 
+            LEFT JOIN user ON baby_board.user_login_id = user.user_login_id
+            WHERE baby_board.user_login_id = ?
+            GROUP BY baby_board.baby_board_id
+            ORDER BY baby_board_id DESC 
+            LIMIT ?, ?`;
+
+        const [rows2] = await db.query(sql2, [user_login_id, skipSize, contentSize]);
+
+        if (rows2.length === 0) {
+            return { contents: [] };  // 빈 결과 반환
+        }
+
+        rows2.forEach((row) => {
+            const date = new Date(row.baby_board_date);
+            row.baby_board_date = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
+        });
+
+        return {
+            totalCount,
+            pageNum,
+            pnStart,
+            pnEnd,
+            pnTotal,
+            contents: rows2
+        };
+    },
     // 개별 육아일지 조회
     getbabyboard: async function (req) {
         const sql = `SELECT baby_board.baby_board_date, baby_board.baby_board_title, baby_board.baby_board_content, baby_board.baby_board_image, user.user_nickname 
