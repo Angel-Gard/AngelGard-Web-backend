@@ -2,20 +2,7 @@ const babyBoardModel = require('../models/babyboard');
 
 module.exports = {
 
-    // 일지 목록 조회
-    getbabyboardList: async function (req, res, next) {
-        try {
-            const result = await babyBoardModel.getbabyboardList(req);  // res 전달하지 않음
-            if (result && result.contents.length > 0) {
-                res.status(200).json(result);
-            } else {
-                res.status(404).json({ message: "일지 목록 조회 실패" });
-            }
-        } catch (err) {
-            next(err);
-        }
-    },
-
+  
     // 개별 일지 조회
     getbabyboard: async function (req, res, next) {
         try {

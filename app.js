@@ -75,7 +75,6 @@ app.use("/comment", commentRouter);
 app.use("/like", likeRouter);
 app.use("/mypage", babyRouter);
 
-app.use("/", indexRouter);
 app.use("/user", userRouter);
 app.use("/image", imageRouter);
 app.use("/dth", dthRouter);
@@ -89,7 +88,7 @@ app.use('/babyboard', babyboardRouter);
 
 
 // Initialize FCM
-fcm.connect();
+//fcm.connect();
 app.use('/push', pushRouter);
 
 // 이미지 반환
