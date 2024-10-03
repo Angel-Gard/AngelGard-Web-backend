@@ -93,7 +93,10 @@ app.use("/eat", eatRouter);
 app.use('/scheduler', schedulerRouter); 
 
 // babyboard 라우터로 들어오는 요청 로그 추가
-app.use('/babyboard', babyboardRouter);
+app.use('/babyboard', (req, res, next) => {
+    console.log('Routing to babyboard:', req.method, req.url);
+    next();
+}, babyboardRouter);
 
 
 

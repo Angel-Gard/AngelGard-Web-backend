@@ -59,8 +59,7 @@ module.exports = {
                      FROM baby_board LEFT JOIN user ON baby_board.user_login_id = user.user_login_id 
                      WHERE baby_board_id = ?`;
     
-        console.log("SQL Query: ", sql);  // SQL 쿼리 로그 출력
-        console.log("baby_board_id: ", req.params.baby_board_id);  // 전달된 파라미터 ID 출력
+        
     
         try {
             const [rows] = await db.query(sql, [Number(req.params.baby_board_id)]);
