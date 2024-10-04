@@ -1,7 +1,10 @@
 const admin = require('firebase-admin');
+const fcm = require('../fcm');
 
 const sendNotification = async (req, res) => {
   try {
+
+    fcm.connect();
     
     const {token} = req.body;
     // const {user_id} = req.body;
