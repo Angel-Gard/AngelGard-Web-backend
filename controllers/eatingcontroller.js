@@ -60,33 +60,40 @@ exports.Babyeating = async (req,res) => {
 
 // 유축량 입력
 exports.Pumping = async (req,res) => {
-    //console.log(today);
+    try{
+        //console.log(today);
     const {intake_amount,baby_name} = req.body;
     console.log(intake_amount,baby_name);
 
+    if (!intake_amount || !baby_name) {
+        return res.status(400).json({ result: false, message: '값을 모두 입력해 주세요.' });
+    }
     const baby_id = await BabyM.Selectbabyid(baby_name);
 
     if(!baby_id){
-        return res.status(405).json({result:false,message:'아이 이름을 찾을 수 없습니다.'});
+        return res.status(404).json({result:false,message:'아이 이름을 찾을 수 없습니다.'});
     }else{
-        const intake = {...req.body,today:today,baby_id:baby_id};
+        const intake = {intake_amount,today:today,baby_id:baby_id};
         console.log(intake);
 
         if(!intake_amount){
             return res.status(406).json({result:false,message:'값을다 입력해 주세요.'});
+            
         }
         else{
             const bintake = await EatM.Mpumping(intake);
             //console.log(bintake);
-            if(bintake.length < 1){
-                return res.status(403).json({ result: false ,message:'실패'});
-            }else{
-                return res.status(200).json({ result: true,message:'성공' });
+            if (!bintake || bintake.affectedRows === 0) {
+                return res.status(500).json({ result: false, message: '유축량 입력 실패' });
             }
+            return res.status(200).json({ result: true, message: '유축량 입력 성공' });
         }
     }
-
-
+    }catch (error) {
+        console.error('Error in Pumping:', error);
+        return res.status(500).json({ result: false, message: '서버 오류' });
+      }
+    
 };
 
 //모유수유 시간 입력
