@@ -66,7 +66,6 @@ exports.Pumping = async (req,res) => {
 
     const baby_id = await BabyM.Selectbabyid(baby_name);
     
-
     if(!baby_id){
         res.status(400).json({result:false,message:'아이 이름을 찾을 수 없습니다.'});
     }else{
