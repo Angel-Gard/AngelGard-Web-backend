@@ -62,7 +62,7 @@ exports.Babyeating = async (req,res) => {
 exports.Pumping = async (req,res) => {
     //console.log(today);
     const {intake_amount,baby_name} = req.body;
-    //console.log(intake_amount,baby_name);
+    console.log(intake_amount,baby_name);
 
     const baby_id = await BabyM.Selectbabyid(baby_name);
 
@@ -70,7 +70,7 @@ exports.Pumping = async (req,res) => {
         return res.status(405).json({result:false,message:'아이 이름을 찾을 수 없습니다.'});
     }else{
         const intake = {...req.body,today:today,baby_id:baby_id};
-        //console.log(intake);
+        console.log(intake);
 
         if(!intake_amount){
             return res.status(406).json({result:false,message:'값을다 입력해 주세요.'});
