@@ -73,7 +73,7 @@ exports.Pumping = async (req,res) => {
     if(!baby_id){
         return res.status(404).json({result:false,message:'아이 이름을 찾을 수 없습니다.'});
     }else{
-        const intake = {intake_amount,today:today,baby_id:baby_id};
+        const intake = {intake_amount,today,baby_id};
         console.log(intake);
 
         if(!intake_amount){
@@ -176,7 +176,7 @@ exports.SelectEat = async (req,res) => {
 //유축량 조회 
 exports.Selectpum = async (req,res) => {
     //console.log(req.body);
-    const {baby_name} = req.body;
+    const {baby_name} = req.query;
 
     const baby_id = await BabyM.Selectbabyid(baby_name);
     
