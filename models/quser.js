@@ -85,7 +85,7 @@ exports.Mdelete = async (data) => {
 
 
 exports.Selectbabyid = async (data) => { // baby_id 찾기
-    console.log("selectbabyid : ",data);
+    console.log("quser selectbabyid : ",data);
     const query = `SELECT baby_id from baby where baby_name = ?`;
     try {
         const [result] = await pool.query(query,[data]);

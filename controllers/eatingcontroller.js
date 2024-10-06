@@ -65,15 +65,15 @@ exports.Pumping = async (req,res) => {
     //console.log(intake_amount,baby_name);
 
     const baby_id = await BabyM.Selectbabyid(baby_name);
-    
+
     if(!baby_id){
-        res.status(400).json({result:false,message:'아이 이름을 찾을 수 없습니다.'});
+        res.status(405).json({result:false,message:'아이 이름을 찾을 수 없습니다.'});
     }else{
         const intake = {...req.body,today:today,baby_id:baby_id};
         //console.log(intake);
 
         if(!intake_amount){
-            res.status(400).json({result:false,message:'값을다 입력해 주세요.'});
+            res.status(406).json({result:false,message:'값을다 입력해 주세요.'});
         }
         else{
             const bintake = await EatM.Mpumping(intake);
@@ -177,7 +177,7 @@ exports.Selectpum = async (req,res) => {
     const y_sel_pum = {date:ydateString,baby_id:baby_id};
 
     if(!baby_id){
-        res.status(400).json({result:false,message:"아이 이름을 찾을 수 없습니다."})
+        res.status(406).json({result:false,message:"아이 이름을 찾을 수 없습니다."})
     }else{
         const group_pum = await EatM.Mpum(today_sel_pum);
         const y_group_pum = await EatM.Mpum(y_sel_pum);
