@@ -176,7 +176,7 @@ exports.SelectEat = async (req,res) => {
 //유축량 조회 
 exports.Selectpum = async (req,res) => {
     //console.log(req.body);
-    const {baby_name} = req.query;
+    const {baby_name} = req.body;
 
     const baby_id = await BabyM.Selectbabyid(baby_name);
     
