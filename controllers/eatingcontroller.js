@@ -43,15 +43,15 @@ exports.Babyeating = async (req,res) => {
         //console.log(babyeat);
 
         if(!feed_amount){
-            res.status(400).json({result:false,message:'값을다 입력해 주세요.'});
+            return res.status(400).json({result:false,message:'값을다 입력해 주세요.'});
         }
         else{
             const beating = await EatM.Meating(babyeat);
             //console.log(beating);
             if(beating.length < 1){
-                res.status(403).json({ result: false ,message:'실패'});
+                return res.status(403).json({ result: false ,message:'실패'});
             }else{
-                res.status(200).json({ result: true,message:'성공' });
+                return res.status(200).json({ result: true,message:'성공' });
             }
         }
     }
@@ -67,21 +67,21 @@ exports.Pumping = async (req,res) => {
     const baby_id = await BabyM.Selectbabyid(baby_name);
 
     if(!baby_id){
-        res.status(405).json({result:false,message:'아이 이름을 찾을 수 없습니다.'});
+        return res.status(405).json({result:false,message:'아이 이름을 찾을 수 없습니다.'});
     }else{
         const intake = {...req.body,today:today,baby_id:baby_id};
         //console.log(intake);
 
         if(!intake_amount){
-            res.status(406).json({result:false,message:'값을다 입력해 주세요.'});
+            return res.status(406).json({result:false,message:'값을다 입력해 주세요.'});
         }
         else{
             const bintake = await EatM.Mpumping(intake);
             //console.log(bintake);
             if(bintake.length < 1){
-                res.status(403).json({ result: false ,message:'실패'});
+                return res.status(403).json({ result: false ,message:'실패'});
             }else{
-                res.status(200).json({ result: true,message:'성공' });
+                return res.status(200).json({ result: true,message:'성공' });
             }
         }
     }
@@ -97,21 +97,21 @@ exports.InsertMS = async (req,res) => {
     const baby_id = await BabyM.Selectbabyid(baby_name);
 
     if(!baby_id){
-        res.status(400).json({result:false,message:'아이 이름을 찾을 수 없습니다.'});
+        return res.status(400).json({result:false,message:'아이 이름을 찾을 수 없습니다.'});
     }else{
 
         const ms_time =  {...req.body,today:today,baby_id:baby_id};
         //console.log(ms_time);
 
         if(!m_time){
-            res.status(400).json({result:false,message:'값을다 입력해 주세요.'});
+            return res.status(400).json({result:false,message:'값을다 입력해 주세요.'});
         }else{
             const insetime = await EatM.MMs(ms_time);
             //console.log(insetime);
             if(insetime.length <1){
-                res.status(403).json({ result: false ,message:'실패'});
+                return res.status(403).json({ result: false ,message:'실패'});
             }else{
-                res.status(200).json({ result: true,message:'성공' });
+                return res.status(200).json({ result: true,message:'성공' });
             }
         }
     }
@@ -177,7 +177,8 @@ exports.Selectpum = async (req,res) => {
     const y_sel_pum = {date:ydateString,baby_id:baby_id};
 
     if(!baby_id){
-        res.status(406).json({result:false,message:"아이 이름을 찾을 수 없습니다."})
+        console.log("유축량 조회 아기 아이디 못찾음");
+        return res.status(406).json({result:false,message:"아이 이름을 찾을 수 없습니다."})
     }else{
         const group_pum = await EatM.Mpum(today_sel_pum);
         const y_group_pum = await EatM.Mpum(y_sel_pum);
