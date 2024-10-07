@@ -1,5 +1,8 @@
 const db = require("../config/db");
 
+
+// 서버 URL을 설정합니다. (환경 변수로도 설정 가능)
+const serverUrl = 'http://localhost:3000';
 module.exports = {
     // 육아일지 목록 조회
     getbabyboardList: async function (req) {
@@ -12,7 +15,6 @@ module.exports = {
         const contentSize = 5;
         const skipSize = (pageNum - 1) * contentSize;
 
-        // 특정 user_login_id에 대한 전체 일지 개수 조회 쿼리
         const sql = `SELECT count(*) AS count FROM baby_board WHERE user_login_id = ?`;
         const [rows] = await db.query(sql, [user_login_id]);
 
@@ -22,7 +24,6 @@ module.exports = {
         let pnEnd = pnStart + 4;
         if (pnEnd > pnTotal) pnEnd = pnTotal;
 
-        // 특정 user_login_id에 맞는 일지 목록 조회 쿼리
         const sql2 = `
             SELECT baby_board.baby_board_id, baby_board.baby_board_title, baby_board.baby_board_date, 
                    baby_board.baby_board_image, baby_board.baby_board_content, user.user_nickname 
@@ -42,6 +43,11 @@ module.exports = {
         rows2.forEach((row) => {
             const date = new Date(row.baby_board_date);
             row.baby_board_date = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
+
+            // 이미지 경로를 절대 경로로 변환
+            if (row.baby_board_image) {
+                row.baby_board_image = `${serverUrl}/uploads/${row.baby_board_image}`;
+            }
         });
 
         return {
