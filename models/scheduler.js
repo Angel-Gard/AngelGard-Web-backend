@@ -4,10 +4,10 @@ module.exports = {
     // 스케줄러 항목 생성
     createscheduler: async function (req) {
         try {
-            const { user_login_id, scheduler_content, scheduler_date } = req.body;
-            const query = `INSERT INTO scheduler (user_login_id, scheduler_content, scheduler_date) VALUES (?, ?, ?)`;
-            await db.query(query, [user_login_id, scheduler_content, scheduler_date]); 
-            console.log("스케줄 생성 성공:", { user_login_id, scheduler_content, scheduler_date });
+            const { user_login_id, scheduler_content, scheduler_date, scheduler_color } = req.body;
+            const query = `INSERT INTO scheduler (user_login_id, scheduler_content, scheduler_date, scheduler_color) VALUES (?, ?, ?, ?)`;
+            await db.query(query, [user_login_id, scheduler_content, scheduler_date, scheduler_color]);
+            console.log("스케줄 생성 성공:", { user_login_id, scheduler_content, scheduler_date, scheduler_color });
             return { success: true, message: "스케줄 생성 성공" };
         } catch (error) {
             console.error("스케줄 생성 실패:", error);
@@ -31,7 +31,6 @@ module.exports = {
             return { success: false, error: "스케줄 조회 실패" };
         }
     },
-
     getscheduleByMonth: async function (year, month) {
         try {
           
