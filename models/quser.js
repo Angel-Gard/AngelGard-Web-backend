@@ -85,9 +85,19 @@ exports.Mdelete = async (data) => {
 
 
 exports.Selectbabyid = async (data) => { // baby_id 찾기
+    console.log("quser selectbabyid : ",data);
     const query = `SELECT baby_id from baby where baby_name = ?`;
-    const [result] = await pool.query(query,data);
-    return result[0].baby_id;
+    try {
+        const [result] = await pool.query(query,[data]);
+        if (result.length === 0) {
+          throw new Error('Baby not found');
+        }
+        return result[0].baby_id;
+    } catch (error) {
+        console.error('Error in Selectbabyid:', error);
+        throw error;
+      }
+    
 }
 
 //유저 고유 id 찾기

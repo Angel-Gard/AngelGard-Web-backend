@@ -26,11 +26,11 @@ const ydateString = yyear + '-' + ymonth  + '-' + yday;
 
 
 
-// 섭취량 입력
+// 섭취량 입력(수유량)
 exports.Babyeating = async (req,res) => {
     //console.log(today);
     //console.log(req.body);
-    const {feed_amount,baby_name} = req.body;
+    const {amount,baby_name} = req.body;
     //console.log(feed_amount,baby_name);
 
     const bName = await BabyM.Selectbabyid(baby_name);
@@ -42,16 +42,16 @@ exports.Babyeating = async (req,res) => {
         const babyeat = {...req.body,today:today,baby_id:bName};
         //console.log(babyeat);
 
-        if(!feed_amount){
-            res.status(400).json({result:false,message:'값을다 입력해 주세요.'});
+        if(!amount){
+            return res.status(400).json({result:false,message:'값을다 입력해 주세요.'});
         }
         else{
             const beating = await EatM.Meating(babyeat);
             //console.log(beating);
             if(beating.length < 1){
-                res.status(403).json({ result: false ,message:'실패'});
+                return res.status(403).json({ result: false ,message:'실패'});
             }else{
-                res.status(200).json({ result: true,message:'성공' });
+                return res.status(200).json({ result: true,message:'성공' });
             }
         }
     }
@@ -60,59 +60,65 @@ exports.Babyeating = async (req,res) => {
 
 // 유축량 입력
 exports.Pumping = async (req,res) => {
-    //console.log(today);
-    const {intake_amount,baby_name} = req.body;
-    //console.log(intake_amount,baby_name);
+    try{
+        //console.log(today);
+    const {intake,baby_name} = req.body;
+    console.log(intake,baby_name);
 
+    if (!intake || !baby_name) {
+        return res.status(400).json({ result: false, message: '값을 모두 입력해 주세요.' });
+    }
     const baby_id = await BabyM.Selectbabyid(baby_name);
-    
 
     if(!baby_id){
-        res.status(400).json({result:false,message:'아이 이름을 찾을 수 없습니다.'});
+        return res.status(404).json({result:false,message:'아이 이름을 찾을 수 없습니다.'});
     }else{
-        const intake = {...req.body,today:today,baby_id:baby_id};
-        //console.log(intake);
+        const g_intake = {intake,today,baby_id};
+        console.log(g_intake);
 
-        if(!intake_amount){
-            res.status(400).json({result:false,message:'값을다 입력해 주세요.'});
+        if(!intake){
+            return res.status(406).json({result:false,message:'값을다 입력해 주세요.'});
+            
         }
         else{
-            const bintake = await EatM.Mpumping(intake);
+            const bintake = await EatM.Mpumping(g_intake);
             //console.log(bintake);
-            if(bintake.length < 1){
-                res.status(403).json({ result: false ,message:'실패'});
-            }else{
-                res.status(200).json({ result: true,message:'성공' });
+            if (!bintake || bintake.affectedRows === 0) {
+                return res.status(500).json({ result: false, message: '유축량 입력 실패' });
             }
+            return res.status(200).json({ result: true, message: '유축량 입력 성공' });
         }
     }
-
-
+    }catch (error) {
+        console.error('Error in Pumping:', error);
+        return res.status(500).json({ result: false, message: '서버 오류' });
+      }
+    
 };
 
 //모유수유 시간 입력
 exports.InsertMS = async (req,res) => {
 
-    const { m_time,baby_name } = req.body;
+    const { time,baby_name } = req.body;
 
     const baby_id = await BabyM.Selectbabyid(baby_name);
 
     if(!baby_id){
-        res.status(400).json({result:false,message:'아이 이름을 찾을 수 없습니다.'});
+        return res.status(400).json({result:false,message:'아이 이름을 찾을 수 없습니다.'});
     }else{
 
         const ms_time =  {...req.body,today:today,baby_id:baby_id};
         //console.log(ms_time);
 
-        if(!m_time){
-            res.status(400).json({result:false,message:'값을다 입력해 주세요.'});
+        if(!time){
+            return res.status(400).json({result:false,message:'값을다 입력해 주세요.'});
         }else{
             const insetime = await EatM.MMs(ms_time);
             //console.log(insetime);
             if(insetime.length <1){
-                res.status(403).json({ result: false ,message:'실패'});
+                return res.status(403).json({ result: false ,message:'실패'});
             }else{
-                res.status(200).json({ result: true,message:'성공' });
+                return res.status(200).json({ result: true,message:'성공' });
             }
         }
     }
@@ -140,11 +146,11 @@ exports.SelectEat = async (req,res) => {
         //console.log(y_group_eat);
 
         let total_group_eat = group_eat.reduce((accumulator, current) => {
-            return accumulator + current.feed_amount;
+            return accumulator + current.amount;
         }, 0);
 
         let total_ygroup_eat = y_group_eat.reduce((accumulator, current) => {
-            return accumulator + current.feed_amount;
+            return accumulator + current.amount;
         }, 0);
 
         if (Array.isArray(group_eat) && group_eat.length === 0) {
@@ -178,7 +184,8 @@ exports.Selectpum = async (req,res) => {
     const y_sel_pum = {date:ydateString,baby_id:baby_id};
 
     if(!baby_id){
-        res.status(400).json({result:false,message:"아이 이름을 찾을 수 없습니다."})
+        console.log("유축량 조회 아기 아이디 못찾음");
+        return res.status(406).json({result:false,message:"아이 이름을 찾을 수 없습니다."})
     }else{
         const group_pum = await EatM.Mpum(today_sel_pum);
         const y_group_pum = await EatM.Mpum(y_sel_pum);
@@ -186,11 +193,11 @@ exports.Selectpum = async (req,res) => {
         console.log("어제 펌: ",y_group_pum);
 
         let total_group_pum = group_pum.reduce((accumulator, current) => {
-            return accumulator + current.intake_amount;
+            return accumulator + current.intake;
         }, 0);
 
         let total_ygroup_pum = y_group_pum.reduce((accumulator, current) => {
-            return accumulator + current.intake_amount;
+            return accumulator + current.intake;
         }, 0);
 
         console.log("토탈 : ",total_group_pum);
@@ -232,11 +239,11 @@ exports.SelectMS = async (req,res) => {
         //console.log(y_group_time);
 
         let total_group_time = group_time.reduce((accumulator, current) => {
-            return accumulator + current.m_time;
+            return accumulator + current.time;
         }, 0);
 
         let total_ygroup_time = y_group_time.reduce((accumulator, current) => {
-            return accumulator + current.m_time;
+            return accumulator + current.time;
         }, 0);
 
         if (Array.isArray(group_time) && group_time.length === 0) {
