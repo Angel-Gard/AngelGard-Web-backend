@@ -6,26 +6,26 @@ const path = require("path");
 // Multer 설정은 그대로 유지
 
 module.exports = {
-    // 일지 목록 조회
-    getbabyboardList: async function (req, res, next) {
-        try {
-            const result = await babyBoardModel.getbabyboardList(req);
-            if (result && result.contents.length > 0) {
-                // 이미지 경로 수정: uploads/ 경로가 중복되지 않도록 설정
-                result.contents = result.contents.map(item => {
-                    if (item.baby_board_image && !item.baby_board_image.startsWith('http')) {
-                        item.baby_board_image = `http://localhost:3000/uploads/${path.basename(item.baby_board_image)}`;
-                    }
-                    return item;
-                });
-                res.status(200).json(result);
-            } else {
-                res.status(404).json({ message: "일지 목록 조회 실패" });
-            }
-        } catch (err) {
-            next(err);
+  // 일지 목록 조회
+getbabyboardList: async function (req, res, next) {
+    try {
+        const result = await babyBoardModel.getbabyboardList(req);
+        if (result && result.contents.length > 0) {
+            // 이미지 경로 수정: uploads/ 경로가 중복되지 않도록 설정
+            result.contents = result.contents.map(item => {
+                if (item.baby_board_image && !item.baby_board_image.startsWith('http')) {
+                    item.baby_board_image = `http://localhost:3000/${item.baby_board_image.replace(/^uploads\//, 'uploads/')}`;
+                }
+                return item;
+            });
+            res.status(200).json(result);
+        } else {
+            res.status(404).json({ message: "일지 목록 조회 실패" });
         }
-    },
+    } catch (err) {
+        next(err);
+    }
+},
 
     // 개별 일지 조회
     getbabyboard: async function (req, res, next) {
@@ -34,7 +34,7 @@ module.exports = {
             if (result) {
                 // 이미지 경로 수정: uploads/ 경로가 중복되지 않도록 설정
                 if (result.baby_board_image && !result.baby_board_image.startsWith('http')) {
-                    result.baby_board_image = `http://localhost:3000/uploads/${path.basename(result.baby_board_image)}`;
+                    result.baby_board_image = `http://localhost:3000/${result.baby_board_image.replace(/^uploads\//, 'uploads/')}`;
                 }
                 res.status(200).json(result);
             } else {
@@ -45,36 +45,35 @@ module.exports = {
         }
     },
 
-    // 일지 생성
-    createbabyboard: async function (req, res, next) {
-        try {
-            const filePath = req.file ? `uploads/${req.file.filename}` : null;
-            const result = await babyBoardModel.createbabyboard(req, filePath);
-            if (result) {
-                res.status(201).json({ message: "일지가 성공적으로 생성되었습니다.", baby_board_id: result });
-            } else {
-                res.status(400).json({ message: "일지 생성 실패" });
-            }
-        } catch (err) {
-            next(err);
+      // 일지 생성
+createbabyboard: async function (req, res, next) {
+    try {
+        const filePath = req.file ? req.file.filename : null; // 여기서 uploads/를 제외
+        const result = await babyBoardModel.createbabyboard(req, filePath);
+        if (result) {
+            res.status(201).json({ message: "일지가 성공적으로 생성되었습니다.", baby_board_id: result });
+        } else {
+            res.status(400).json({ message: "일지 생성 실패" });
         }
-    },
+    } catch (err) {
+        next(err);
+    }
+},
 
-    // 일지 수정
-    updatebabyboard: async function (req, res, next) {
-        try {
-            const filePath = req.file ? `uploads/${req.file.filename}` : null;
-            const result = await babyBoardModel.updatebabyboard(req, filePath);
-            if (result) {
-                res.status(200).json({ message: "일지가 성공적으로 수정되었습니다." });
-            } else {
-                res.status(400).json({ message: "일지 수정 실패" });
-            }
-        } catch (err) {
-            next(err);
+// 일지 수정
+updatebabyboard: async function (req, res, next) {
+    try {
+        const filePath = req.file ? req.file.filename : null; // 여기서 uploads/를 제외
+        const result = await babyBoardModel.updatebabyboard(req, filePath);
+        if (result) {
+            res.status(200).json({ message: "일지가 성공적으로 수정되었습니다." });
+        } else {
+            res.status(400).json({ message: "일지 수정 실패" });
         }
-    },
-
+    } catch (err) {
+        next(err);
+    }
+},
     // 일지 삭제
     deletebabyboard: async function (req, res, next) {
         try {
