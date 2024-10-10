@@ -96,10 +96,15 @@ getbabyboard: async function (req, res, next) {
     }
 },
 
-    // 일지 생성
+  // 일지 생성
 createbabyboard: async function (req, res, next) {
     try {
-        const filePath = req.file ? req.file.filename : null; // 여기서 'uploads/'를 제외하고 파일 이름만 저장
+        let filePath = req.file ? req.file.filename : null; // 기본적으로 파일 이름만 설정
+
+        if (filePath && !filePath.startsWith('uploads/')) {
+            filePath = `uploads/${filePath}`; // 경로가 'uploads/'로 시작하지 않으면 추가
+        }
+
         console.log(`업로드된 파일 경로: ${filePath}`);
         const result = await babyBoardModel.createbabyboard(req, filePath);
         if (result) {
@@ -115,7 +120,12 @@ createbabyboard: async function (req, res, next) {
 // 일지 수정
 updatebabyboard: async function (req, res, next) {
     try {
-        const filePath = req.file ? req.file.filename : null; // 여기서 'uploads/'를 제외하고 파일 이름만 저장
+        let filePath = req.file ? req.file.filename : null; // 기본적으로 파일 이름만 설정
+
+        if (filePath && !filePath.startsWith('uploads/')) {
+            filePath = `uploads/${filePath}`; // 경로가 'uploads/'로 시작하지 않으면 추가
+        }
+
         const result = await babyBoardModel.updatebabyboard(req, filePath);
         if (result) {
             res.status(200).json({ message: "일지가 성공적으로 수정되었습니다." });
