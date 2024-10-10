@@ -59,83 +59,66 @@ const upload = multer({
 module.exports = {
     upload,  // multer 설정을 export하여 라우터에서 사용 가능하도록 함
 
-   // 일지 목록 조회
-getbabyboardList: async function (req, res, next) {
-    try {
-        const result = await babyBoardModel.getbabyboardList(req);
-        if (result && result.contents.length > 0) {
-            result.contents = result.contents.map(item => {
-                if (item.baby_board_image && !item.baby_board_image.startsWith('http')) {
-                    item.baby_board_image = `http://localhost:3000/uploads/${item.baby_board_image}`; // 경로를 이곳에서 추가
-                }
-                return item;
-            });
-            res.status(200).json(result);
-        } else {
-            res.status(404).json({ message: "일지 목록 조회 실패" });
-        }
-    } catch (err) {
-        next(err);
-    }
-},
-
-// 개별 일지 조회
-getbabyboard: async function (req, res, next) {
-    try {
-        const result = await babyBoardModel.getbabyboard(req);
-        if (result) {
-            if (result.baby_board_image && !result.baby_board_image.startsWith('http')) {
-                result.baby_board_image = `http://localhost:3000/uploads/${result.baby_board_image}`; // 경로를 이곳에서 추가
+    // 일지 목록 조회
+    getbabyboardList: async function (req, res, next) {
+        try {
+            const result = await babyBoardModel.getbabyboardList(req);  // res 전달하지 않음
+            if (result && result.contents.length > 0) {
+                res.status(200).json(result);
+            } else {
+                res.status(404).json({ message: "일지 목록 조회 실패" });
             }
-            res.status(200).json(result);
-        } else {
-            res.status(404).json({ message: "해당 일지가 존재하지 않습니다." });
+        } catch (err) {
+            next(err);
         }
-    } catch (err) {
-        next(err);
-    }
-},
+    },
 
-  // 일지 생성
-createbabyboard: async function (req, res, next) {
-    try {
-        let filePath = req.file ? req.file.filename : null; // 기본적으로 파일 이름만 설정
-
-        if (filePath && !filePath.startsWith('uploads/')) {
-            filePath = `uploads/${filePath}`; // 경로가 'uploads/'로 시작하지 않으면 추가
+    // 개별 일지 조회
+    getbabyboard: async function (req, res, next) {
+        try {
+            console.log("babyboardController.getbabyboard called with ID:", req.params.baby_board_id);
+            const result = await babyBoardModel.getbabyboard(req);
+            
+            if (result) {
+                res.status(200).json(result);
+            } else {
+                res.status(404).json({ message: "해당 일지가 존재하지 않습니다." });
+            }
+        } catch (err) {
+            next(err);
         }
+    },
 
-        console.log(`업로드된 파일 경로: ${filePath}`);
-        const result = await babyBoardModel.createbabyboard(req, filePath);
-        if (result) {
-            res.status(201).json({ message: "일지가 성공적으로 생성되었습니다.", baby_board_id: result });
-        } else {
-            res.status(400).json({ message: "일지 생성 실패" });
+    // 일지 생성
+    createbabyboard: async function (req, res, next) {
+        try {
+            const filePath = req.file ? req.file.path : null; // 파일 업로드가 있을 경우
+            console.log(`업로드된 파일 경로: ${filePath}`);
+            const result = await babyBoardModel.createbabyboard(req, filePath);
+            if (result) {
+                res.status(201).json({ message: "일지가 성공적으로 생성되었습니다.", baby_board_id: result });
+            } else {
+                res.status(400).json({ message: "일지 생성 실패" });
+            }
+        } catch (err) {
+            next(err);
         }
-    } catch (err) {
-        next(err);
-    }
-},
+    },
 
-// 일지 수정
-updatebabyboard: async function (req, res, next) {
-    try {
-        let filePath = req.file ? req.file.filename : null; // 기본적으로 파일 이름만 설정
-
-        if (filePath && !filePath.startsWith('uploads/')) {
-            filePath = `uploads/${filePath}`; // 경로가 'uploads/'로 시작하지 않으면 추가
+    // 일지 수정
+    updatebabyboard: async function (req, res, next) {
+        try {
+            const filePath = req.file ? req.file.path : null; // 파일 업로드가 있을 경우
+            const result = await babyBoardModel.updatebabyboard(req, filePath);
+            if (result) {
+                res.status(200).json({ message: "일지가 성공적으로 수정되었습니다." });
+            } else {
+                res.status(400).json({ message: "일지 수정 실패" });
+            }
+        } catch (err) {
+            next(err);
         }
-
-        const result = await babyBoardModel.updatebabyboard(req, filePath);
-        if (result) {
-            res.status(200).json({ message: "일지가 성공적으로 수정되었습니다." });
-        } else {
-            res.status(400).json({ message: "일지 수정 실패" });
-        }
-    } catch (err) {
-        next(err);
-    }
-},
+    },
 
     // 일지 삭제
     deletebabyboard: async function (req, res, next) {
