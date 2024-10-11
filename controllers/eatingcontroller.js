@@ -28,7 +28,6 @@ const ydateString = yyear + '-' + ymonth  + '-' + yday;
 
 // 섭취량 입력(수유량)
 exports.Babyeating = async (req,res) => {
-    try{
         //console.log(today);
     //console.log(req.body);
     const {amount,baby_name} = req.body;
@@ -56,17 +55,13 @@ exports.Babyeating = async (req,res) => {
             }
         }
     }
-    }catch (error) {
-        console.error('Error in Pumping:', error);
-        return res.status(500).json({ result: false, message: '서버 오류' });
-    }
     
 
 };
 
 // 유축량 입력
 exports.Pumping = async (req,res) => {
-    try{
+
         //console.log(today);
     const {intake,baby_name} = req.body;
     console.log(intake,baby_name);
@@ -95,17 +90,14 @@ exports.Pumping = async (req,res) => {
             return res.status(200).json({ result: true, message: '유축량 입력 성공' });
         }
     }
-    }catch (error) {
-        console.error('Error in Pumping:', error);
-        return res.status(500).json({ result: false, message: '서버 오류' });
-      }
+
     
 };
 
 //모유수유 시간 입력
 exports.InsertMS = async (req,res) => {
 
-    try{
+
         const { time,baby_name } = req.body;
 
         const baby_id = await BabyM.Selectbabyid(baby_name);
@@ -129,16 +121,12 @@ exports.InsertMS = async (req,res) => {
                 }
             }
         }
-    }catch (error) {
-        console.error('Error in Pumping:', error);
-        return res.status(500).json({ result: false, message: '서버 오류' });
-    }
 
 }
 
 //섭취량 조회
 exports.SelectEat = async (req,res) => {
-    try{
+
         //console.log(req.body);
         //const {baby_name} = req.body;
         const {baby_name} = req.params.baby_name;
@@ -181,16 +169,12 @@ exports.SelectEat = async (req,res) => {
 
         }
 
-    }catch (error) {
-        console.error('Error in Pumping:', error);
-        return res.status(500).json({ result: false, message: '서버 오류' });
-    }
 
 }
 
 //유축량 조회 
 exports.Selectpum = async (req,res) => {
-    try{
+
         //console.log(req.body);
         //const {baby_name} = req.body;
         const {baby_name} = req.params.baby_name;
@@ -235,16 +219,13 @@ exports.Selectpum = async (req,res) => {
             return res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
             
         }
-    }catch (error) {
-        console.error('Error in Pumping:', error);
-        return res.status(500).json({ result: false, message: '서버 오류' });
-    }
+
 }
 
 
 //모유수유 시간 조회
 exports.SelectMS = async (req,res) => {
-    try{ 
+
         //const {baby_name} = req.body;
         const {baby_name} = req.params.baby_name;
 
@@ -284,9 +265,6 @@ exports.SelectMS = async (req,res) => {
             return res.status(200).json({"오늘 모유수유 시간":total_group_time,"전날 모유수유 시간":total_ygroup_time});
         }
 
-    }catch (error) {
-        console.error('Error in Pumping:', error);
-        return res.status(500).json({ result: false, message: '서버 오류' });
-    }
+
 
 }
