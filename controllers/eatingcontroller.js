@@ -227,7 +227,7 @@ exports.Selectpum = async (req,res) => {
 exports.SelectMS = async (req,res) => {
 
         //const {baby_name} = req.body;
-        const {baby_name} = req.params.baby_name;
+        const baby_name = req.params.baby_name;
 
         const baby_id = await BabyM.Selectbabyid(baby_name);
 
