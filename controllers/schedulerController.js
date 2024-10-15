@@ -2,26 +2,24 @@ const schedulerModel = require('../models/scheduler');
 
 module.exports = {
 
-    // 스케줄러 항목 생성
-    createscheduler: async function (req) {
-        try {
-            const { user_login_id, scheduler_content, scheduler_date, scheduler_color } = req.body;
-            
-            // scheduler_date에서 날짜 부분만 추출
-            const date = new Date(scheduler_date);
-            const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-            
-            const query = `INSERT INTO scheduler (user_login_id, scheduler_content, scheduler_date, scheduler_color) VALUES (?, ?, ?, ?)`;
-            await db.query(query, [user_login_id, scheduler_content, formattedDate, scheduler_color]);
-            
-            console.log("스케줄 생성 성공:", { user_login_id, scheduler_content, formattedDate, scheduler_color });
-            return { success: true, message: "스케줄 생성 성공" };
-        } catch (error) {
-            console.error("스케줄 생성 실패:", error);
-            return { success: false, error: "스케줄 생성 실패" };
-        }
-    },
+  // 스케줄러 항목 생성
+createscheduler: async function (req) {
+    try {
+        const { user_login_id, scheduler_content, scheduler_date, scheduler_color } = req.body;
 
+        // MySQL의 DATE 형식에 맞게 날짜 변환 (YYYY-MM-DD)
+        const formattedDate = scheduler_date.split('T')[0];
+
+        const query = `INSERT INTO scheduler (user_login_id, scheduler_content, scheduler_date, scheduler_color) VALUES (?, ?, ?, ?)`;
+        await db.query(query, [user_login_id, scheduler_content, formattedDate, scheduler_color]);
+
+        console.log("스케줄 생성 성공:", { user_login_id, scheduler_content, formattedDate, scheduler_color });
+        return { success: true, message: "스케줄 생성 성공" };
+    } catch (error) {
+        console.error("스케줄 생성 실패:", error);
+        return { success: false, error: "스케줄 생성 실패" };
+    }
+},
     // 특정 날짜의 스케줄 조회
     getSchedule: async function (req, res, next) {
         try {
@@ -53,25 +51,24 @@ module.exports = {
     },
 
 
-    // 스케줄러 항목 업데이트
-    updateschedule: async function (data) {
-        try {
-            const { scheduler_id, scheduler_content, scheduler_date } = data;
-            
-            // scheduler_date에서 날짜 부분만 추출
-            const date = new Date(scheduler_date);
-            const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-            
-            const query = `UPDATE scheduler SET scheduler_content = ?, scheduler_date = ? WHERE scheduler_id = ?`;
-            await db.query(query, [scheduler_content, formattedDate, scheduler_id]);
-            
-            console.log("스케줄 업데이트 성공:", { scheduler_id, scheduler_content, formattedDate });
-            return { success: true, message: "스케줄 업데이트 성공" };
-        } catch (error) {
-            console.error("스케줄 업데이트 실패:", error);
-            return { success: false, error: "스케줄 업데이트 실패" };
-        }
-    },
+   // 스케줄러 항목 업데이트
+updateschedule: async function (data) {
+    try {
+        const { scheduler_id, scheduler_content, scheduler_date } = data;
+
+        // MySQL의 DATE 형식에 맞게 날짜 변환 (YYYY-MM-DD)
+        const formattedDate = scheduler_date.split('T')[0];
+
+        const query = `UPDATE scheduler SET scheduler_content = ?, scheduler_date = ? WHERE scheduler_id = ?`;
+        await db.query(query, [scheduler_content, formattedDate, scheduler_id]);
+
+        console.log("스케줄 업데이트 성공:", { scheduler_id, scheduler_content, formattedDate });
+        return { success: true, message: "스케줄 업데이트 성공" };
+    } catch (error) {
+        console.error("스케줄 업데이트 실패:", error);
+        return { success: false, error: "스케줄 업데이트 실패" };
+    }
+},
     // 스케줄러 항목 삭제
     deleteScheduler: async function (req, res, next) {
         try {
