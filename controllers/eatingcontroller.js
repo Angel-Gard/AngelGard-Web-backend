@@ -156,16 +156,16 @@ exports.SelectEat = async (req,res) => {
             if (Array.isArray(group_eat) && group_eat.length === 0) {
                 console.log("오늘 빈 배열입니다.");
                 total_group_eat =0;
-                return res.status(200).json({"오늘 섭취량":total_group_eat,"전날 섭취량":total_ygroup_eat});
+                return res.status(200).json({today_amount:total_group_eat,yesterday_amount:total_ygroup_eat});
             }
 
             if (Array.isArray(y_group_eat) && y_group_eat.length === 0) {
                 console.log("어제 빈 배열입니다.");
                 total_ygroup_eat = 0;
-                return res.status(200).json({"오늘 섭취량":total_group_eat,"전날 섭취량":total_ygroup_eat});
+                return res.status(200).json({today_amount:total_group_eat,yesterday_amount:total_ygroup_eat});
             }
 
-            return res.status(200).json({"오늘 섭취량":total_group_eat,"전날 섭취량":total_ygroup_eat});
+            return res.status(200).json({today_amount:total_group_eat,yesterday_amount:total_ygroup_eat});
 
         }
 
@@ -207,16 +207,16 @@ exports.Selectpum = async (req,res) => {
             if (Array.isArray(group_pum) && group_pum.length === 0) {
                 console.log("오늘 빈 배열입니다.");
                 total_group_pum =0;
-                return res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
+                return res.status(200).json({today_intake:total_group_pum,yesterday_intake:total_ygroup_pum});
             }
 
             if (Array.isArray(y_group_pum) && group_pum.length === 0) {
                 console.log("어제 빈 배열입니다.");
                 total_ygroup_pum = 0;
-                return res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
+                return res.status(200).json({today_intake:total_group_pum,yesterday_intake:total_ygroup_pum});
             }
 
-            return res.status(200).json({"오늘 유축량":total_group_pum,"전날 유축량":total_ygroup_pum});
+            return res.status(200).json({today_intake:total_group_pum,yesterday_intake:total_ygroup_pum});
             
         }
 
@@ -253,16 +253,16 @@ exports.SelectMS = async (req,res) => {
             if (Array.isArray(group_time) && group_time.length === 0) {
                 console.log("오늘 빈 배열입니다.");
                 total_group_time =0;
-                return res.status(200).json({"오늘 모유수유 시간":total_group_time,"전날 모유수유 시간":total_ygroup_time});
+                return res.status(200).json({today_time:total_group_time,yesterday_time:total_ygroup_time});
             }
 
             if (Array.isArray(y_group_time) && y_group_time.length === 0) {
                 console.log("어제 빈 배열입니다.");
                 total_ygroup_time = 0;
-                return res.status(200).json({"오늘 모유수유 시간":total_group_time,"전날 모유수유 시간":total_ygroup_time});
+                return res.status(200).json({today_time:total_group_time,yesterday_time:total_ygroup_time});
             }
 
-            return res.status(200).json({"오늘 모유수유 시간":total_group_time,"전날 모유수유 시간":total_ygroup_time});
+            return res.status(200).json({today_time:total_group_time,yesterday_time:total_ygroup_time});
         }
 
 
