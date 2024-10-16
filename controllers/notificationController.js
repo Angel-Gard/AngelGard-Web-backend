@@ -1,16 +1,16 @@
 const admin = require('firebase-admin');
 const fcm = require('../fcm');
+const User = require('../models/quser');
 
 const sendNotification = async (req, res) => {
   try {
 
     fcm.connect();
-    
-    const {token} = req.body;
-    // const {user_id} = req.body;
+    const user_id = req.params.uuid;
+    //const {user_id} = req.body;
 
 
-    // const token = await User.SelDev(user_id);
+    const token = await User.SelDev(user_id);
     const title = 'ANGEL GUARD';
     const body = '아이의 상태를 확인해 주세요!';
 
