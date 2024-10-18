@@ -2,7 +2,6 @@ const admin = require('firebase-admin');
 const fcm = require('../fcm');
 const User = require('../models/quser');
 
-const admin = require('firebase-admin');
 //const serviceAccount = require('./path/firebase-admin.json');
 const serviceAccount = require('./path/angelguard-push-firebase-adminsdk-mkcok-cce94130f5.json');
 
