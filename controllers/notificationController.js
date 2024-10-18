@@ -8,7 +8,7 @@ const sendNotification = async (req, res) => {
     //const user_id = req.params.uuid;
     //const {user_id} = req.body;
     const user_login_id = req.params.user_login_id;
-    console.log = user_login_id;
+    console.log (user_login_id);
     const user_id = await User.getUniqueUser(user_login_id);
     console.log(user_id);
 
