@@ -2,10 +2,28 @@ const admin = require('firebase-admin');
 const fcm = require('../fcm');
 const User = require('../models/quser');
 
+const admin = require('firebase-admin');
+//const serviceAccount = require('./path/firebase-admin.json');
+const serviceAccount = require('./path/angelguard-push-firebase-adminsdk-mkcok-cce94130f5.json');
+
+const connect = async () => { //firebase 초기화
+  try {
+    if (admin.apps.length === 0) {
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+      });
+      console.log('FCM SDK Initialized');
+    }
+  } catch (error) {
+    console.error('FCM connection error:', error.message);
+  }
+};
+
+
 const sendNotification = async (req, res) => {
   try {
 
-    fcm.connect();
+    connect();
     //const user_id = req.params.uuid;
     //const {user_id} = req.body;
     const user_login_id = req.params.user_login_id;
