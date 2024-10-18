@@ -2,13 +2,9 @@ const admin = require('firebase-admin');
 const fcm = require('../fcm');
 const User = require('../models/quser');
 
-const initializeFirebase = async () => {
-  await connect();
-};
 
 const sendNotification = async (req, res) => {
   try {
-    await initializeFirebase();
     //const user_id = req.params.uuid;
     //const {user_id} = req.body;
     const user_login_id = req.params.user_login_id;
