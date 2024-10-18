@@ -3,7 +3,7 @@ const fcm = require('../fcm');
 const User = require('../models/quser');
 
 //const serviceAccount = require('./path/firebase-admin.json');
-const serviceAccount = require('./path/angelguard-push-firebase-adminsdk-mkcok-cce94130f5.json');
+const serviceAccount = require('../path/angelguard-push-firebase-adminsdk-mkcok-cce94130f5.json');
 
 const connect = async () => { //firebase 초기화
   try {
