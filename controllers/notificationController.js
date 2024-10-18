@@ -1,12 +1,14 @@
 const admin = require('firebase-admin');
-//const fcm = require('../fcm');
+const fcm = require('../fcm');
 const User = require('../models/quser');
 
-
+const initializeFirebase = async () => {
+  await connect();
+};
 
 const sendNotification = async (req, res) => {
   try {
-
+    await initializeFirebase();
     //const user_id = req.params.uuid;
     //const {user_id} = req.body;
     const user_login_id = req.params.user_login_id;
@@ -16,6 +18,10 @@ const sendNotification = async (req, res) => {
 
 
     const token = await User.SelDev(user_id);
+    if (!token) {
+      throw new Error('유효한 FCM 토큰이 없습니다.');
+    }
+
     const title = 'ANGEL GUARD';
     const body = '아이의 상태를 확인해 주세요!';
 
