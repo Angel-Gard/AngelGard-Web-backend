@@ -117,7 +117,7 @@ exports.SelDev = async (data) => {
     console.log('넘어온 값',data)
     const query = `select user_fcmtoken from user where user_id = ?`
     try{
-        const [rows] = await pool.query(query,data);
+        const [rows] = await pool.query(query,data.user_id);
         console.log('data',rows);
         return rows;
     }catch{
