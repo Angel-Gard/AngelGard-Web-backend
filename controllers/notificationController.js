@@ -13,7 +13,6 @@ const sendNotification = async (req, res) => {
     const user_id = await User.getUniqueUser(user_login_id);
     console.log(user_id);
 
-
     const token = await User.SelDev(user_id);
     console.log('토큰 값 : ' ,token);
     if (!token) {
