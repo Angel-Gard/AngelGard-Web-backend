@@ -16,7 +16,7 @@ const sendNotification = async (req, res) => {
     const token = await User.SelDev(user_id);
     console.log('토큰 값 : ' ,token);
     if (!token) {
-      throw new Error('유효한 FCM 토큰이 없습니다.');
+      return res.status(400).json({ message: '유효한 FCM 토큰이 없습니다.' });
     }
 
     const title = 'ANGEL GUARD';
@@ -47,9 +47,8 @@ const sendNotification = async (req, res) => {
 
     res.status(200).json({ message: '알림이 성공적으로 전송되었습니다!' });
   } catch (err) {
-    res
-      .status(err.status || 500)
-      .json({ message: err.message || '문제가 발생했습니다!' });
+    console.error('알림 전송 중 오류 발생:', err);
+    res.status(500).json({ message: '알림 전송 중 오류가 발생했습니다.' });
   }
 };
 
