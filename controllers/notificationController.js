@@ -14,7 +14,7 @@ const sendNotification = async (req, res) => {
     console.log(user_id);
 
     const tokenData = await User.SelDev(user_id);
-    const token = tokenData.user_fcmtoken;
+    const token = tokenData ? tokenData.user_fcmtoken : null;
     console.log('토큰 값 : ' ,token);
     if (!token) {
       return res.status(400).json({ message: '유효한 FCM 토큰이 없습니다.' });
