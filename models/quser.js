@@ -118,7 +118,7 @@ exports.SelDev = async (data) => {
     // const query = `select user_fcmtoken from user where user_id =? `
     const query = `select user_fcmtoken from user where user_id =? LIMIT 1`
     try{
-        const [rows] = await pool.query(query,[data]);
+        const [rows] = await pool.query(query,data);
         console.log('data',rows);
         return rows;
     }catch{
