@@ -104,7 +104,7 @@ exports.Selectbabyid = async (data) => { // baby_id 찾기
 exports.SelDev = async (data) => {
     console.log('넘어온 값',data)
     // const query = `select user_fcmtoken from user where user_id =? LIMIT 1`
-    const query = `select user_fcmtoken from user where user_id =?`
+    const query = `SELECT  user_fcmtoken FROM user WHERE user_id =?`
     try{
         const [rows] = await pool.query(query,data);
         console.log('data',rows);
