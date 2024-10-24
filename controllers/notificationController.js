@@ -13,7 +13,7 @@ const sendNotification = async (req, res) => {
     const user_id = await User.getUniqueUser(user_login_id);
     console.log(user_id);
     const uN = user_id[0].user_id;
-    console.log(uN)
+    console.log('숫자' , uN);
 
     const token = await User.SelDev(user_id);
 
