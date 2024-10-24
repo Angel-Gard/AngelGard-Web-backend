@@ -114,6 +114,7 @@ exports.SelUid = async (data) => {
 
 //유저 id로 device값 찾기
 exports.SelDev = async (data) => {
+    const data = data.user_id
     console.log('넘어온 값',data)
     // const query = `select user_fcmtoken from user where user_id =? `
     const query = `select user_fcmtoken from user where user_id =? LIMIT 1`
