@@ -120,6 +120,9 @@ exports.SelDev = async (data) => {
     try{
         const [rows] = await pool.query(query,data);
         console.log('data',rows);
+        const uN = data.map(item => item.user_id);
+        const fcmt = rows[uN]
+        console.log(fcmt);
         return rows;
     }catch{
         console.log('Database Query Error : ',error);
