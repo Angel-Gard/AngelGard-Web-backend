@@ -5,12 +5,13 @@ const User = require('../models/quser');
 
 const sendNotification = async (req, res) => {
   try {
-    //const user_id = req.params.uuid;
+    const user_id_ = req.params.uuid;
+    console.log("넘어온 uuid : ",user_id_);
     //const {user_id} = req.body;
-    const user_login_id = req.params.user_login_id;
-    console.log (user_login_id);
+    //const user_login_id = req.params.user_login_id;
+    //console.log (user_login_id);
+    //const user_id_ = await User.getUniqueUser(user_login_id);
 
-    const user_id_ = await User.getUniqueUser(user_login_id);
     const user_id = user_id_[0].user_id;
     console.log(user_id);
     const uN = user_id_[0].user_id;
