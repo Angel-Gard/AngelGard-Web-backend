@@ -17,7 +17,7 @@ const sendNotification = async (req, res) => {
     const uN = user_id_[0].user_id;
     console.log('숫자' , uN);
 
-    const tokenData = await User.SelDev(user_id);
+    const tokenData = await User.SelDev(user_id_);
 
     console.log(tokenData);
 
