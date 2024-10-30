@@ -16,7 +16,7 @@ const sendNotification = async (req, res) => {
 
     const tokenData = await User.SelDev(user_id_);
 
-    console.log(tokenData);
+    //console.log(tokenData);
 
     const token = tokenData[0]?.user_fcmtoken;
 
