@@ -11,9 +11,6 @@ const sendNotification = async (req, res) => {
     //const user_login_id = req.params.user_login_id;
     //console.log (user_login_id);
     //const user_id_ = await User.getUniqueUser(user_login_id);
-
-    const user_id = 1;
-    console.log(user_id);
     const uN = user_id_[0].user_id;
     console.log('숫자' , uN);
 
