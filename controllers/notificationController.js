@@ -13,6 +13,9 @@ const sendNotification = async (req, res) => {
     //const user_id_ = await User.getUniqueUser(user_login_id);
     const uN = user_id_[0].user_id;
     console.log('숫자' , uN);
+    if(user_id_===0){
+      user_id_=5;
+    }
 
     const tokenData = await User.SelDev(user_id_);
 
