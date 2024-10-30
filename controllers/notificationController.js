@@ -18,6 +18,9 @@ const sendNotification = async (req, res) => {
     console.log('숫자' , uN);
 
     const tokenData = await User.SelDev(user_id);
+
+    console.log(tokenData);
+
     const token = tokenData[0]?.user_fcmtoken;
 
     console.log('토큰값 : ',token);
