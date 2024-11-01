@@ -51,7 +51,7 @@ exports.uploadImage = [
             let filePath = "";
             const userId = req.params.user_login_id;
             if (file) {
-                filePath = "http://louk342.iptime.org:3000/img/profile/" + file.filename;
+                filePath = "http://34.47.76.73:3000/img/profile/" + file.filename;
                 console.log("file Path : ", filePath);
                 newInfo["imageFile"] = filePath;
             }

@@ -125,12 +125,14 @@ updatebabyboard: async function (req, filePath) {
             return false;
         }
 
+
         console.log(`baby_board_id ${req.params.baby_board_id}: 일지 수정 성공`);
         return true;
     } catch (error) {
         console.error("일지 수정 중 오류 발생: ", error);
         throw error;
-    }
+
+    } 
 },
 
     // 육아일지 삭제

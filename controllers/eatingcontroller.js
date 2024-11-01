@@ -230,6 +230,8 @@ exports.SelectMS = async (req,res) => {
         const baby_name = req.params.baby_name;
 
         const baby_id = await BabyM.Selectbabyid(baby_name);
+        console.log("오늘 : ",dateString);
+        console.log("어제 : ",ydateString);
 
         const today_sel_time = {date:dateString,baby_id:baby_id};
         const y_sel_time = {date:ydateString,baby_id:baby_id};
@@ -239,8 +241,8 @@ exports.SelectMS = async (req,res) => {
         }else{
             const group_time = await EatM.MselectMS(today_sel_time);
             const y_group_time = await EatM.MselectMS(y_sel_time);
-            //console.log(group_time);
-            //console.log(y_group_time);
+            console.log("오늘 : ",group_time);
+            console.log("어제 : ",y_group_time);
 
             let total_group_time = group_time.reduce((accumulator, current) => {
                 return accumulator + current.time;

@@ -15,3 +15,21 @@ exports.getTempData = async (req,res) => {
         res.status(500).json({ error: 'Failed to fetch data from external API' });
       }
 };
+
+exports.testcontroller = async(req,res) => {
+  const user_login_id = req.params.user_login_id;
+  console.log (user_login_id);
+  
+  const user_id = await User.getUniqueUser(user_login_id);
+  console.log(user_id);
+
+
+  const token = await User.SelDev(user_id);
+  if (!token) {
+    throw new Error('유효한 FCM 토큰이 없습니다.');
+  }
+
+  res.status(200).json({ message: '성공' });
+
+
+}

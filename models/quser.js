@@ -36,7 +36,7 @@ exports.MgetUserDetails = async (id) => {
 exports.getUniqueUser = async (id) => {
     const query = `SELECT user_id FROM user WHERE user_login_id =?`;
     try{
-        const [rows] = await pool.query(query,[id]);
+        const [rows] = await pool.query(query,id);
         return rows;
     }catch(err){
         console.error('Database Query Error:', error);
@@ -100,24 +100,14 @@ exports.Selectbabyid = async (data) => { // baby_id 찾기
     
 }
 
-//유저 고유 id 찾기
-exports.SelUid = async (data) => {
-    const query = `SELECT user_id,user_device FROM user WHERE user_login_id = ?`;
-    try{
-        const rows = await pool.query(query,data);
-        console.log('data',rows);
-        return [rows];
-    }catch (error){
-        console.log('Database Query Error : ',error);
-    }
-}
-
 //유저 id로 device값 찾기
 exports.SelDev = async (data) => {
     console.log('넘어온 값',data)
-    const query = `select user_fcmtoken from user where user_id = ?`
+    const uid = data;
+    // const query = `select user_fcmtoken from user where user_id =? LIMIT 1`
+    const query = `SELECT  user_fcmtoken FROM user WHERE user_id =?`
     try{
-        const [rows] = await pool.query(query,data.user_id);
+        const [rows] = await pool.query(query,uid);
         console.log('data',rows);
         return rows;
     }catch{

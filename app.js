@@ -7,6 +7,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const methodOverride = require('method-override');
+const fcm = require('./fcm');
 
 // 라우터 임포트
 const testRouter = require("./routes/testRouter");
@@ -97,7 +98,7 @@ app.use('/babyboard', (req, res, next) => {
 }, babyboardRouter);
 
 // Initialize FCM
-// fcm.connect();
+fcm.connect().catch(console.error);
 app.use('/push', pushRouter);
 
 // 이미지 반환

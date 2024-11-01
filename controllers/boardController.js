@@ -99,7 +99,7 @@ module.exports = {
             try {
                 if (req.file) {
                     // 이미지가 있을 경우
-                    filePath = "http://louk342.iptime.org:3000/img/thumbnails/" + req.file.filename;
+                    filePath = "http://34.47.76.73:3000/img/thumbnails/" + req.file.filename;
                 }
 
                 // ********************null 공백 체크************************
@@ -177,7 +177,7 @@ module.exports = {
             try {
                 if (req.file) {
                     // 이미지가 있을 경우
-                    filePath = "http://louk342.iptime.org:3000/img/thumbnails/" + req.file.filename;
+                    filePath = "http://34.47.76.73:3000/img/thumbnails/" + req.file.filename;
                 }
                 await boards
                     .selectImage(req)
