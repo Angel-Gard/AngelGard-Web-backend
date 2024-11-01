@@ -241,8 +241,8 @@ exports.SelectMS = async (req,res) => {
         }else{
             const group_time = await EatM.MselectMS(today_sel_time);
             const y_group_time = await EatM.MselectMS(y_sel_time);
-            //console.log(group_time);
-            //console.log(y_group_time);
+            console.log("오늘 : ",group_time);
+            console.log("어제 : ",y_group_time);
 
             let total_group_time = group_time.reduce((accumulator, current) => {
                 return accumulator + current.time;
