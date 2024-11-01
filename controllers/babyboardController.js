@@ -101,6 +101,7 @@ module.exports = {
                 res.status(400).json({ message: "일지 생성 실패" });
             }
         } catch (err) {
+            console.log(err);
             next(err);
         }
     },
