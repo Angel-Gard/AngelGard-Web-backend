@@ -7,7 +7,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const methodOverride = require('method-override');
-const fcm = require('./fcm');
+//const fcm = require('./fcm');
 
 // 라우터 임포트
 const testRouter = require("./routes/testRouter");
@@ -29,6 +29,7 @@ const app = express();
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
+
 
 // 미들웨어
 app.use(methodOverride("_method"));
@@ -98,7 +99,7 @@ app.use('/babyboard', (req, res, next) => {
 }, babyboardRouter);
 
 // Initialize FCM
-fcm.connect().catch(console.error);
+//fcm.connect().catch(console.error);
 app.use('/push', pushRouter);
 
 // 이미지 반환
