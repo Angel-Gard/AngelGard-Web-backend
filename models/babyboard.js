@@ -110,6 +110,7 @@ createbabyboard: async function (req, res, next) {
             res.status(400).json({ message: "일지 생성 실패" });
         }
     } catch (err) {
+        console.log('modle : ' ,err);
         next(err);
     }
 },
