@@ -230,6 +230,8 @@ exports.SelectMS = async (req,res) => {
         const baby_name = req.params.baby_name;
 
         const baby_id = await BabyM.Selectbabyid(baby_name);
+        console.log("오늘 : ",dateString);
+        console.log("어제 : ",ydateString);
 
         const today_sel_time = {date:dateString,baby_id:baby_id};
         const y_sel_time = {date:ydateString,baby_id:baby_id};
