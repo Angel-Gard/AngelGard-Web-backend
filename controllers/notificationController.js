@@ -5,7 +5,7 @@ const User = require('../models/quser');
 
 const sendNotification = async (req, res) => {
   try {
-    const user_id_ = req.params.uuid;
+    let user_id_ = req.params.uuid;
     console.log("넘어온 uuid : ",user_id_);
     //const {user_id} = req.body;
     //const user_login_id = req.params.user_login_id;
@@ -13,10 +13,9 @@ const sendNotification = async (req, res) => {
     //const user_id_ = await User.getUniqueUser(user_login_id);
     const uN = user_id_[0];
     console.log('숫자' , uN);
-    
-    user_id_=5;
-    
-
+    if(uN=== 0){
+      user_id_=5;
+    }
     console.log('유저아이디:',user_id_);
 
     const tokenData = await User.SelDev(user_id_);
