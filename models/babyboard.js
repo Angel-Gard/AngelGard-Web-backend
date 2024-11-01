@@ -97,39 +97,42 @@ module.exports = {
         return Number(rows.insertId);
     },
 
-    // 일지 생성
-createbabyboard: async function (req, res, next) {
+
+
+// 육아일지 수정
+updatebabyboard: async function (req, filePath) {
+    const sql = `
+        UPDATE baby_board 
+        SET baby_board_title = ?, baby_board_content = ?, baby_board_image = ?, baby_board_date = NOW()
+        WHERE baby_board_id = ? AND user_login_id = ?
+    `;
+
+    // 이미지 파일이 없을 경우 filePath를 null로 설정
+    const params = [
+        req.body.baby_board_title,
+        req.body.baby_board_content,
+        filePath,
+        Number(req.params.baby_board_id),
+        req.body.user_login_id
+    ];
+
     try {
-        console.log('파일 정보:', req.file); // 파일 정보 로그 추가
-        const filePath = req.file ? req.file.path : null; // 파일 업로드가 있을 경우
-        console.log(`업로드된 파일 경로: ${filePath}`); // 업로드된 파일 경로 로그 추가
-        const result = await babyBoardModel.createbabyboard(req, filePath);
-        if (result) {
-            res.status(201).json({ message: "일지가 성공적으로 생성되었습니다.", baby_board_id: result });
-        } else {
-            res.status(400).json({ message: "일지 생성 실패" });
+        const [rows] = await db.query(sql, params);
+        
+        // 수정 성공 여부 확인
+        if (rows.affectedRows === 0) {
+            console.log(`baby_board_id ${req.params.baby_board_id}: 일지 수정 실패`);
+            return false;
         }
-    } catch (err) {
-        next(err);
+
+        console.log(`baby_board_id ${req.params.baby_board_id}: 일지 수정 성공`);
+        return true;
+    } catch (error) {
+        console.error("일지 수정 중 오류 발생: ", error);
+        throw error;
     }
 },
 
-// 일지 수정
-updatebabyboard: async function (req, res, next) {
-    try {
-        console.log('파일 정보:', req.file); // 파일 정보 로그 추가
-        const filePath = req.file ? req.file.path : null; // 파일 업로드가 있을 경우
-        console.log(`업로드된 파일 경로: ${filePath}`); // 업로드된 파일 경로 로그 추가
-        const result = await babyBoardModel.updatebabyboard(req, filePath);
-        if (result) {
-            res.status(200).json({ message: "일지가 성공적으로 수정되었습니다." });
-        } else {
-            res.status(400).json({ message: "일지 수정 실패" });
-        }
-    } catch (err) {
-        next(err);
-    }
-},
     // 육아일지 삭제
     deletebabyboard: async function (req, res) {
         const sql = `DELETE FROM baby_board WHERE baby_board_id = ?`;
