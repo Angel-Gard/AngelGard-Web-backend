@@ -98,42 +98,38 @@ module.exports = {
     },
 
 
-
-// 육아일지 수정
-updatebabyboard: async function (req, filePath) {
-    const sql = `
-        UPDATE baby_board 
-        SET baby_board_title = ?, baby_board_content = ?, baby_board_image = ?, baby_board_date = NOW()
-        WHERE baby_board_id = ? AND user_login_id = ?
-    `;
-
-    // 이미지 파일이 없을 경우 filePath를 null로 설정
-    const params = [
-        req.body.baby_board_title,
-        req.body.baby_board_content,
-        filePath,
-        Number(req.params.baby_board_id),
-        req.body.user_login_id
-    ];
-
-    try {
-        const [rows] = await db.query(sql, params);
-        
-        // 수정 성공 여부 확인
-        if (rows.affectedRows === 0) {
-            console.log(`baby_board_id ${req.params.baby_board_id}: 일지 수정 실패`);
-            return false;
-        }
-
-
-        console.log(`baby_board_id ${req.params.baby_board_id}: 일지 수정 성공`);
-        return true;
-    } catch (error) {
-        console.error("일지 수정 중 오류 발생: ", error);
-        throw error;
-
-    } 
-},
+//일지수정
+    updatebabyboard: async function (req, filePath) {
+        const sql = `
+            UPDATE baby_board 
+            SET baby_board_title = ?, baby_board_content = ?, baby_board_image = ?, baby_board_date = NOW()
+            WHERE baby_board_id = ? AND user_login_id = ?`;
+    
+        // 이미지 파일이 없을 경우 filePath를 null로 설정
+        const params = [
+            req.body.baby_board_title,
+            req.body.baby_board_content,
+            filePath,
+            Number(req.params.baby_board_id),
+            req.body.user_login_id
+        ];
+    
+        try {
+            const [rows] = await db.query(sql, params);
+            
+            // 수정 성공 여부 확인
+            if (rows.affectedRows === 0) {
+                console.log(`baby_board_id ${req.params.baby_board_id}: 일지 수정 실패`);
+                return false;
+            }
+    
+            console.log(`baby_board_id ${req.params.baby_board_id}: 일지 수정 성공`);
+            return true;
+        } catch (error) {
+            console.error("일지 수정 중 오류 발생: ", error);
+            throw error; // 모델에서는 에러를 throw하여 컨트롤러가 처리하도록 함
+        } 
+    },
 
     // 육아일지 삭제
     deletebabyboard: async function (req, res) {

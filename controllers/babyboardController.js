@@ -106,20 +106,21 @@ module.exports = {
         }
     },
 
-    // 일지 수정
-    updatebabyboard: async function (req, res, next) {
-        try {
-            const filePath = req.file ? req.file.path : null; // 파일 업로드가 있을 경우
-            const result = await babyBoardModel.updatebabyboard(req, filePath);
-            if (result) {
-                res.status(200).json({ message: "일지가 성공적으로 수정되었습니다." });
-            } else {
-                res.status(400).json({ message: "일지 수정 실패" });
-            }
-        } catch (err) {
-            next(err);
+
+   // 일지 수정
+updatebabyboard: async function (req, res, next) {
+    try {
+        const filePath = req.file ? req.file.path : null; // 파일 업로드가 있을 경우
+        const result = await babyBoardModel.updatebabyboard(req, filePath);
+        if (result) {
+            res.status(200).json({ message: "일지가 성공적으로 수정되었습니다." });
+        } else {
+            res.status(400).json({ message: "일지 수정 실패" });
         }
-    },
+    } catch (err) {
+        next(err); // 여기서 next 함수를 호출하여 에러 미들웨어로 전달
+    }
+},
 
     // 일지 삭제
     deletebabyboard: async function (req, res, next) {
