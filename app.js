@@ -90,7 +90,7 @@ app.use("/user", userRouter);
 app.use("/image", imageRouter);
 app.use("/dth", dthRouter);
 app.use("/eat", eatRouter);
-app.use('/scheduler', schedulerRouter);
+app.use("/scheduler", schedulerRouter);
 
 // babyboard 라우터로 들어오는 요청 로그 추가
 app.use('/babyboard', (req, res, next) => {
