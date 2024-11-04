@@ -99,7 +99,7 @@ app.use('/babyboard', (req, res, next) => {
 }, babyboardRouter);
 
 // Initialize FCM
-//fcm.connect().catch(console.error);
+fcm.connect().catch(console.error);
 app.use('/push', pushRouter);
 
 // 이미지 반환
