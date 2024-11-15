@@ -16,7 +16,7 @@ const sendNotification = async (req, res) => {
     if(uN== 0){
       user_id_=13;
     }
-    if(uN ===1){
+    if(uN ==1){
       user_id_=13;
     }
 
