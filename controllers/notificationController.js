@@ -14,7 +14,7 @@ const sendNotification = async (req, res) => {
     const uN = user_id_[0];
     console.log('숫자' , uN);
     if(uN== 0){
-      user_id_=5;
+      user_id_=13;
     }
     if(uN ===1){
       user_id_=13;
